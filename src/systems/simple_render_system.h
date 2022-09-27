@@ -9,12 +9,13 @@
 // std
 #include <memory>
 #include <vector>
+#include "../AssetsSystem.h"
 
 namespace lwmeta {
 class SimpleRenderSystem {
  public:
   SimpleRenderSystem(
-          Device &device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout);
+          Device &device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout, VkDescriptorSetLayout textureSetLayout, AssetsSystem &assetSystem);
   ~SimpleRenderSystem();
 
   SimpleRenderSystem(const SimpleRenderSystem &) = delete;
@@ -23,10 +24,11 @@ class SimpleRenderSystem {
   void renderGameObjects(FrameInfo &frameInfo);
 
  private:
-  void createPipelineLayout(VkDescriptorSetLayout globalSetLayout);
+  void createPipelineLayout(VkDescriptorSetLayout globalSetLayout, VkDescriptorSetLayout textureSetLayout);
   void createPipeline(VkRenderPass renderPass);
 
   Device &device;
+  AssetsSystem &assetSystem;
 
   std::unique_ptr<Pipeline> pipeline;
   VkPipelineLayout pipelineLayout;

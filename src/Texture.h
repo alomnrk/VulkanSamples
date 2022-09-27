@@ -8,11 +8,15 @@
 #include "device.h"
 #include <string.h>
 #include <vulkan/vulkan.h>
+#include <unordered_map>
 
 namespace lwmeta{
     class Texture {
     public:
-        Texture(Device &device, const std::string &filepath);
+        using id_t = unsigned int;
+//        using Map = std::unordered_map<id_t, Texture>;
+
+        Texture(Device &device, const std::string &filepath, id_t textureId);
         ~Texture();
 
         Texture(const Texture &) = delete;
@@ -23,7 +27,18 @@ namespace lwmeta{
         VkSampler getSampler() { return sampler; }
         VkImageView getImageView() { return imageView; }
         VkImageLayout getImageLayout() { return imageLayout; }
+
+        id_t getId() { return id; }
+
+        static Texture* createTexture(Device &device, const std::string &filepath) {
+            static id_t currentId = 0;
+            return new Texture(device, filepath, currentId++);
+        }
     private:
+
+
+        id_t id;
+
         void transitionImageLayout(VkImageLayout oldLayout, VkImageLayout newLayout);
         void generateMipmaps();
 

@@ -5,6 +5,7 @@
 #include "game_object.h"
 #include "renderer.h"
 #include "window.h"
+#include "AssetsSystem.h"
 
 // std
 #include <memory>
@@ -34,5 +35,8 @@ class FirstApp {
   // note: order of declarations matters
   std::unique_ptr<DescriptorPool> globalPool{};
   GameObject::Map gameObjects;
+
+  std::unique_ptr<DescriptorSetLayout> textureSetLayout; //to RenderPipeline
+  AssetsSystem assetSystem{device};
 };
 }  // namespace lwmeta

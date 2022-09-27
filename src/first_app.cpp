@@ -25,19 +25,24 @@
 namespace lwmeta {
 
 FirstApp::FirstApp() {
-  globalPool =
+    globalPool =
       DescriptorPool::Builder(device)
-          .setMaxSets(SwapChain::MAX_FRAMES_IN_FLIGHT)
+          .setMaxSets(SwapChain::MAX_DESCRIPTION_SETS)
           .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, SwapChain::MAX_FRAMES_IN_FLIGHT)
-          .addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, SwapChain::MAX_FRAMES_IN_FLIGHT)
+          .addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, SwapChain::MAX_TEXTURES)
           .build();
-  loadGameObjects();
+
+    textureSetLayout = DescriptorSetLayout::Builder(device)
+            .addBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
+            .build();
+
+    loadGameObjects();
 }
 
 FirstApp::~FirstApp() {}
 
 void FirstApp::run() {
-  std::vector<std::unique_ptr<Buffer>> uboBuffers(SwapChain::MAX_FRAMES_IN_FLIGHT);
+    std::vector<std::unique_ptr<Buffer>> uboBuffers(SwapChain::MAX_FRAMES_IN_FLIGHT);
   for (int i = 0; i < uboBuffers.size(); i++) {
     uboBuffers[i] = std::make_unique<Buffer>(
             device,
@@ -51,15 +56,7 @@ void FirstApp::run() {
   auto globalSetLayout =
       DescriptorSetLayout::Builder(device)
           .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS)
-          .addBinding(1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
           .build();
-
-  Texture texture = Texture(device, "../textures/t2.jpg");
-
-  VkDescriptorImageInfo imageInfo;
-  imageInfo.sampler = texture.getSampler();
-  imageInfo.imageView = texture.getImageView();
-  imageInfo.imageLayout = texture.getImageLayout();
 
 
 
@@ -68,14 +65,15 @@ void FirstApp::run() {
     auto bufferInfo = uboBuffers[i]->descriptorInfo();
     DescriptorWriter(*globalSetLayout, *globalPool)
         .writeBuffer(0, &bufferInfo)
-        .writeImage(1, &imageInfo)
         .build(globalDescriptorSets[i]);
   }
+
+
 
   SimpleRenderSystem simpleRenderSystem{
           device,
           renderer.getSwapChainRenderPass(),
-          globalSetLayout->getDescriptorSetLayout()};
+          globalSetLayout->getDescriptorSetLayout(), textureSetLayout->getDescriptorSetLayout(), assetSystem};
   PointLightSystem pointLightSystem{
           device,
           renderer.getSwapChainRenderPass(),
@@ -135,13 +133,21 @@ void FirstApp::run() {
   vkDeviceWaitIdle(device.device());
 }
 
+
 void FirstApp::loadGameObjects() {
+    auto testTextureId = assetSystem.AddTexture("../textures/test2.jpg");
+    auto testMaterialId = assetSystem.CreateMaterial(testTextureId, textureSetLayout.get(), globalPool.get());
+
+    auto testTexture2Id = assetSystem.AddTexture("../textures/test.png");
+    auto testMaterial2Id = assetSystem.CreateMaterial(testTexture2Id, textureSetLayout.get(), globalPool.get());
+
   std::shared_ptr<Model> model =
       Model::createModelFromFile(device, "models/flat_vase.obj");
   auto flatVase = GameObject::createGameObject();
   flatVase.model = model;
   flatVase.transform.translation = {-.5f, .5f, 0.f};
   flatVase.transform.scale = {3.f, 1.5f, 3.f};
+  flatVase.materialId = testMaterialId; //material
   gameObjects.emplace(flatVase.getId(), std::move(flatVase));
 
   model = Model::createModelFromFile(device, "models/smooth_vase.obj");
@@ -149,14 +155,15 @@ void FirstApp::loadGameObjects() {
   smoothVase.model = model;
   smoothVase.transform.translation = {.5f, .5f, 0.f};
   smoothVase.transform.scale = {3.f, 1.5f, 3.f};
+    smoothVase.materialId = testMaterial2Id; //material
   gameObjects.emplace(smoothVase.getId(), std::move(smoothVase));
-
-  model = Model::createModelFromFile(device, "models/quad.obj");
-  auto floor = GameObject::createGameObject();
-  floor.model = model;
-  floor.transform.translation = {0.f, .5f, 0.f};
-  floor.transform.scale = {3.f, 1.f, 3.f};
-  gameObjects.emplace(floor.getId(), std::move(floor));
+//
+//  model = Model::createModelFromFile(device, "models/quad.obj");
+//  auto floor = GameObject::createGameObject();
+//  floor.model = model;
+//  floor.transform.translation = {0.f, .5f, 0.f};
+//  floor.transform.scale = {3.f, 1.f, 3.f};
+//  gameObjects.emplace(floor.getId(), std::move(floor));
 
   std::vector<glm::vec3> lightColors{
       {1.f, .1f, .1f},

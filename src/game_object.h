@@ -55,6 +55,8 @@ class GameObject {
   std::shared_ptr<Model> model{};
   std::unique_ptr<PointLightComponent> pointLight = nullptr;
 
+  size_t materialId;
+
  private:
   GameObject(id_t objId) : id{objId} {}
 

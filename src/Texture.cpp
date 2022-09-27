@@ -14,7 +14,9 @@
 #include <locale>
 
 namespace lwmeta {
-    Texture::Texture(Device &device, const std::string &filepath) : device{device} {
+    Texture::Texture(Device &device, const std::string &filepath, id_t textureId) : device{device} {
+        id = textureId;
+
         int channels;
         int m_BytesPerPixel;
 
