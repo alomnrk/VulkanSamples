@@ -5,6 +5,7 @@
 #include "camera.h"
 #include "systems/point_light_system.h"
 #include "systems/simple_render_system.h"
+#include "systems/SkyBoxRenderSystem.h"
 
 // libs
 #define GLM_FORCE_RADIANS
@@ -78,6 +79,15 @@ void FirstApp::run() {
           device,
           renderer.getSwapChainRenderPass(),
           globalSetLayout->getDescriptorSetLayout()};
+
+    SkyBoxRenderSystem skyBoxRenderSystem{
+            device,
+            renderer.getSwapChainRenderPass(),
+            globalSetLayout->getDescriptorSetLayout()};
+
+
+
+
   Camera camera{};
 
   auto viewerObject = GameObject::createGameObject();
@@ -107,7 +117,7 @@ void FirstApp::run() {
           commandBuffer,
           camera,
           globalDescriptorSets[frameIndex],
-          gameObjects};
+          gameObjects, skyBox};
 
       // update
       GlobalUbo ubo{};
@@ -122,8 +132,10 @@ void FirstApp::run() {
       renderer.beginSwapChainRenderPass(commandBuffer);
 
       // order here matters
+      skyBoxRenderSystem.renderGameObjects(frameInfo);
       simpleRenderSystem.renderGameObjects(frameInfo);
       pointLightSystem.render(frameInfo);
+
 
       renderer.endSwapChainRenderPass(commandBuffer);
       renderer.endFrame();

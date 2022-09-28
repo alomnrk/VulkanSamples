@@ -20,6 +20,7 @@ struct TransformComponent {
   // Rotations correspond to Tait-bryan angles of Y(1), X(2), Z(3)
   // https://en.wikipedia.org/wiki/Euler_angles#Rotation_matrix
   glm::mat4 mat4();
+  glm::mat4 rot4();
 
   glm::mat3 normalMatrix();
 };

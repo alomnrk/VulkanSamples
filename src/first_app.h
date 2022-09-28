@@ -35,6 +35,7 @@ class FirstApp {
   // note: order of declarations matters
   std::unique_ptr<DescriptorPool> globalPool{};
   GameObject::Map gameObjects;
+    GameObject skyBox{GameObject::createGameObject()};
 
   std::unique_ptr<DescriptorSetLayout> textureSetLayout; //to RenderPipeline
   AssetsSystem assetSystem{device};

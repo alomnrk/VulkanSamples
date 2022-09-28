@@ -31,5 +31,6 @@ struct FrameInfo {
   Camera &camera;
   VkDescriptorSet globalDescriptorSet;
   GameObject::Map &gameObjects;
+  GameObject &skyBox;
 };
 }  // namespace lwmeta

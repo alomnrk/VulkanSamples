@@ -31,6 +31,35 @@ glm::mat4 TransformComponent::mat4() {
       {translation.x, translation.y, translation.z, 1.0f}};
 }
 
+    glm::mat4 TransformComponent::rot4() {
+        const float c3 = glm::cos(rotation.z);
+        const float s3 = glm::sin(rotation.z);
+        const float c2 = glm::cos(rotation.x);
+        const float s2 = glm::sin(rotation.x);
+        const float c1 = glm::cos(rotation.y);
+        const float s1 = glm::sin(rotation.y);
+        return glm::mat4{
+                {
+                        1 * (c1 * c3 + s1 * s2 * s3),
+                                1 * (c2 * s3),
+                                               1 * (c1 * s2 * s3 - c3 * s1),
+                                                              0.0f,
+                },
+                {
+                        1 * (c3 * s1 * s2 - c1 * s3),
+                                1 * (c2 * c3),
+                                               1 * (c1 * c3 * s2 + s1 * s3),
+                                                              0.0f,
+                },
+                {
+                        1 * (c2 * s1),
+                                s1 * (-s2),
+                                               1 * (c1 * c2),
+                                                              0.0f,
+                },
+                {0, 0, 0, 1.0f}};
+    }
+
 glm::mat3 TransformComponent::normalMatrix() {
   const float c3 = glm::cos(rotation.z);
   const float s3 = glm::sin(rotation.z);
