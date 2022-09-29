@@ -148,8 +148,8 @@ void FirstApp::run() {
 
       // order here matters
       skyBoxRenderSystem.renderGameObjects(frameInfo);
-//      simpleRenderSystem.renderGameObjects(frameInfo);
-//      pointLightSystem.render(frameInfo);
+      simpleRenderSystem.renderGameObjects(frameInfo);
+      pointLightSystem.render(frameInfo);
 
 
       renderer.endSwapChainRenderPass(commandBuffer);
@@ -184,7 +184,7 @@ void FirstApp::loadGameObjects() {
   smoothVase.transform.scale = {3.f, 1.5f, 3.f};
     smoothVase.materialId = testMaterial2Id; //material
   gameObjects.emplace(smoothVase.getId(), std::move(smoothVase));
-//
+
 //  model = Model::createModelFromFile(device, "models/quad.obj");
 //  auto floor = GameObject::createGameObject();
 //  floor.model = model;

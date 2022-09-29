@@ -82,6 +82,8 @@ class AssetsSystem {
 public:
     using id_t = unsigned int;
 
+
+
     AssetsSystem(Device &device);
     ~AssetsSystem();
 
@@ -99,6 +101,7 @@ public:
 
 private:
     Device &device;
+    uint32_t currentId = 0;
 
     std::unordered_map<id_t, Texture*> textures;
     std::unordered_map<id_t, Material*> materials;

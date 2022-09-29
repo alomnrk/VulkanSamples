@@ -20,13 +20,13 @@ namespace lwmeta{
     }
 
     id_t AssetsSystem::CreateTextureMaterial(uint32_t texture_id, DescriptorSetLayout* layout, DescriptorPool* pool) {
-        auto material = TextureMaterial::createMaterial(textures.at(texture_id), layout, pool);
+        auto material = new TextureMaterial(currentId++, textures.at(texture_id), layout, pool);
         materials.emplace(material->getId(), material);
         return material->getId();
     }
 
     id_t AssetsSystem::CreateCubeMapMaterial(uint32_t cubeMap_id, DescriptorSetLayout* layout, DescriptorPool* pool) {
-        auto material = SkyBoxMaterial::createMaterial(cubeMaps.at(cubeMap_id), layout, pool);
+        auto material = new SkyBoxMaterial(currentId++, cubeMaps.at(cubeMap_id), layout, pool);
         materials.emplace(material->getId(), material);
         return material->getId();
     }
