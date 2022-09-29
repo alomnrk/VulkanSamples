@@ -37,6 +37,21 @@ FirstApp::FirstApp() {
             .addBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
             .build();
 
+//    texture2SetLayout = DescriptorSetLayout::Builder(device)
+//            .addBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
+//            .build();
+
+    auto cubeMapId = assetSystem.AddCubeMap({
+        "../textures/skyboxes/yokohama/right.jpg",
+        "../textures/skyboxes/yokohama/left.jpg",
+        "../textures/skyboxes/yokohama/up.jpg",
+        "../textures/skyboxes/yokohama/bottom.jpg",
+        "../textures/skyboxes/yokohama/far.jpg",
+        "../textures/skyboxes/yokohama/near.jpg",
+    });
+    auto testMaterialId = assetSystem.CreateCubeMapMaterial(cubeMapId, textureSetLayout.get(), globalPool.get());
+    skyBox.materialId = testMaterialId;
+
     loadGameObjects();
 }
 
@@ -83,7 +98,7 @@ void FirstApp::run() {
     SkyBoxRenderSystem skyBoxRenderSystem{
             device,
             renderer.getSwapChainRenderPass(),
-            globalSetLayout->getDescriptorSetLayout()};
+            globalSetLayout->getDescriptorSetLayout(), textureSetLayout->getDescriptorSetLayout(), assetSystem};
 
 
 
@@ -133,8 +148,8 @@ void FirstApp::run() {
 
       // order here matters
       skyBoxRenderSystem.renderGameObjects(frameInfo);
-      simpleRenderSystem.renderGameObjects(frameInfo);
-      pointLightSystem.render(frameInfo);
+//      simpleRenderSystem.renderGameObjects(frameInfo);
+//      pointLightSystem.render(frameInfo);
 
 
       renderer.endSwapChainRenderPass(commandBuffer);
@@ -148,10 +163,10 @@ void FirstApp::run() {
 
 void FirstApp::loadGameObjects() {
     auto testTextureId = assetSystem.AddTexture("../textures/test2.jpg");
-    auto testMaterialId = assetSystem.CreateMaterial(testTextureId, textureSetLayout.get(), globalPool.get());
+    auto testMaterialId = assetSystem.CreateTextureMaterial(testTextureId, textureSetLayout.get(), globalPool.get());
 
     auto testTexture2Id = assetSystem.AddTexture("../textures/test.png");
-    auto testMaterial2Id = assetSystem.CreateMaterial(testTexture2Id, textureSetLayout.get(), globalPool.get());
+    auto testMaterial2Id = assetSystem.CreateTextureMaterial(testTexture2Id, textureSetLayout.get(), globalPool.get());
 
   std::shared_ptr<Model> model =
       Model::createModelFromFile(device, "models/flat_vase.obj");

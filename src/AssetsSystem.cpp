@@ -13,8 +13,20 @@ namespace lwmeta{
         return texture->getId();
     }
 
-    id_t AssetsSystem::CreateMaterial(uint32_t texture_id, DescriptorSetLayout* layout, DescriptorPool* pool) {
-        auto material = Material::createMaterial(textures.at(texture_id), layout, pool);
+    id_t AssetsSystem::AddCubeMap(const std::vector<char*> &fileNames){
+        CubeMap* cubeMap = CubeMap::createTexture(device, fileNames);
+        cubeMaps.emplace(cubeMap->getId(), cubeMap);
+        return cubeMap->getId();
+    }
+
+    id_t AssetsSystem::CreateTextureMaterial(uint32_t texture_id, DescriptorSetLayout* layout, DescriptorPool* pool) {
+        auto material = TextureMaterial::createMaterial(textures.at(texture_id), layout, pool);
+        materials.emplace(material->getId(), material);
+        return material->getId();
+    }
+
+    id_t AssetsSystem::CreateCubeMapMaterial(uint32_t cubeMap_id, DescriptorSetLayout* layout, DescriptorPool* pool) {
+        auto material = SkyBoxMaterial::createMaterial(cubeMaps.at(cubeMap_id), layout, pool);
         materials.emplace(material->getId(), material);
         return material->getId();
     }

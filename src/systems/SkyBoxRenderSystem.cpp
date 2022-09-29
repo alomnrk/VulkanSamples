@@ -4,6 +4,7 @@
 
 #include "SkyBoxRenderSystem.h"
 #include "../model.h"
+#include "../AssetsSystem.h"
 
 namespace lwmeta {
 
@@ -17,40 +18,40 @@ namespace lwmeta {
         modelBuilder.vertices =
                 {
                         // left face (white)
-                        {{-1, -1, -1}, {.9f, .9f, .9f}},
-                        {{-1, 1, 1}, {.9f, .9f, .9f}},
+                        {{-1, -1, -1}, {.9f, .9f, .9f},},
+                        {{-1, 1, 1}, {.9f, .9f, .9f},},
                         {{-1, -1, 1}, {.9f, .9f, .9f}},
                         {{-1, 1, -1}, {.9f, .9f, .9f}},
 
                         // right face (yellow)
-                        {{1, -1, -1}, {.8f, .8f, .1f}},
-                        {{1, 1, 1}, {.8f, .8f, .1f}},
-                        {{1, -1, 1}, {.8f, .8f, .1f}},
-                        {{1, 1, -1}, {.8f, .8f, .1f}},
+                        {{1, -1, -1}, {.8f, .8f, .1f}, {0, 0, 0}, {0, 0}},
+                        {{1, 1, 1}, {.8f, .8f, .1f}, {0, 0, 0}, {0, 0}},
+                        {{1, -1, 1}, {.8f, .8f, .1f}, {0, 0, 0}, {0, 0}},
+                        {{1, 1, -1}, {.8f, .8f, .1f}, {0, 0, 0}, {0, 0}},
 
                         // top face (orange, remember y axis points down)
-                        {{-1, -1, -1}, {.9f, .6f, .1f}},
-                        {{1, -1, 1}, {.9f, .6f, .1f}},
-                        {{-1, -1, 1}, {.9f, .6f, .1f}},
-                        {{1, -1, -1}, {.9f, .6f, .1f}},
+                        {{-1, -1, -1}, {.9f, .6f, .1f}, {0, 0, 0}, {0, 0}},
+                        {{1, -1, 1}, {.9f, .6f, .1f}, {0, 0, 0}, {0, 0}},
+                        {{-1, -1, 1}, {.9f, .6f, .1f}, {0, 0, 0}, {0, 0}},
+                        {{1, -1, -1}, {.9f, .6f, .1f}, {0, 0, 0}, {0, 0}},
 
                         // bottom face (red)
-                        {{-1, 1, -1}, {.8f, .1f, .1f}},
-                        {{1, 1, 1}, {.8f, .1f, .1f}},
-                        {{-1, 1, 1}, {.8f, .1f, .1f}},
-                        {{1, 1, -1}, {.8f, .1f, .1f}},
+                        {{-1, 1, -1}, {.8f, .1f, .1f}, {0, 0, 0}, {0, 0}},
+                        {{1, 1, 1}, {.8f, .1f, .1f}, {0, 0, 0}, {0, 0}},
+                        {{-1, 1, 1}, {.8f, .1f, .1f}, {0, 0, 0}, {0, 0}},
+                        {{1, 1, -1}, {.8f, .1f, .1f}, {0, 0, 0}, {0, 0}},
 
                         // nose face (blue)
-                        {{-1, -1, 1}, {.1f, .1f, .8f}},
-                        {{1, 1, 1}, {.1f, .1f, .8f}},
-                        {{-1, 1, 1}, {.1f, .1f, .8f}},
-                        {{1, -1, 1}, {.1f, .1f, .8f}},
+                        {{-1, -1, 1}, {.1f, .1f, .8f}, {0, 0, 0}, {0, 0}},
+                        {{1, 1, 1}, {.1f, .1f, .8f}, {0, 0, 0}, {0, 0}},
+                        {{-1, 1, 1}, {.1f, .1f, .8f}, {0, 0, 0}, {0, 0}},
+                        {{1, -1, 1}, {.1f, .1f, .8f}, {0, 0, 0}, {0, 0}},
 
                         // tail face (green)
-                        {{-1, -1, -1}, {.1f, .8f, .1f}},
-                        {{1, 1, -1}, {.1f, .8f, .1f}},
-                        {{-1, 1, -1}, {.1f, .8f, .1f}},
-                        {{1, -1, -1}, {.1f, .8f, .1f}},
+                        {{-1, -1, -1}, {.1f, .8f, .1f}, {0, 0, 0}, {0, 0}},
+                        {{1, 1, -1}, {.1f, .8f, .1f}, {0, 0, 0}, {0, 0}},
+                        {{-1, 1, -1}, {.1f, .8f, .1f}, {0, 0, 0}, {0, 0}},
+                        {{1, -1, -1}, {.1f, .8f, .1f}, {0, 0, 0}, {0, 0}},
                 };
         modelBuilder.indices = {0,  1,  2,  0,  3,  1,  4,  6,  5,  4,  5,  7,  8,  10,  9, 8, 9, 11,
                                 12, 13, 14, 12, 15, 13, 16, 18, 17, 19, 16, 17, 20, 21, 22, 20, 23, 21};
@@ -61,20 +62,20 @@ namespace lwmeta {
 
 
     SkyBoxRenderSystem::SkyBoxRenderSystem(
-            Device& device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout)
-            : device{device} {
+            Device& device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout, VkDescriptorSetLayout textureSetLayout, AssetsSystem& assetsSystem)
+            : device{device}, assetsSystem{assetsSystem} {
         createModel();
-        createPipelineLayout(globalSetLayout);
+        createPipelineLayout(globalSetLayout, textureSetLayout);
         createPipeline(renderPass);
     }
 
-    void SkyBoxRenderSystem::createPipelineLayout(VkDescriptorSetLayout globalSetLayout) {
+    void SkyBoxRenderSystem::createPipelineLayout(VkDescriptorSetLayout globalSetLayout, VkDescriptorSetLayout cubeMapSetLayout) {
         VkPushConstantRange pushConstantRange{};
         pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
         pushConstantRange.offset = 0;
         pushConstantRange.size = sizeof(SkyBoxPushConstants);
 
-        std::vector<VkDescriptorSetLayout> descriptorSetLayouts{globalSetLayout};
+        std::vector<VkDescriptorSetLayout> descriptorSetLayouts{globalSetLayout, cubeMapSetLayout};
 
         VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
         pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
@@ -128,6 +129,16 @@ namespace lwmeta {
                 sizeof(SkyBoxPushConstants),
                 &push);
 
+
+        vkCmdBindDescriptorSets(
+                frameInfo.commandBuffer,
+                VK_PIPELINE_BIND_POINT_GRAPHICS,
+                pipelineLayout,
+                1,
+                1,
+                &assetsSystem.GetMaterial(frameInfo.skyBox.materialId)->descriptorSet,
+                0,
+                nullptr);
 
         skyBoxModel->bind(frameInfo.commandBuffer);
         skyBoxModel->draw(frameInfo.commandBuffer);

@@ -9,6 +9,7 @@
 #include "../frame_info.h"
 #include "../pipeline.h"
 #include "../model.h"
+#include "../AssetsSystem.h"
 
 namespace lwmeta {
     class SkyBoxRenderSystem {
@@ -17,7 +18,7 @@ namespace lwmeta {
                 Device
         &device,
         VkRenderPass renderPass, VkDescriptorSetLayout
-        globalSetLayout);
+        globalSetLayout, VkDescriptorSetLayout textureSetLayout, AssetsSystem& assetsSystem);
 
         ~SkyBoxRenderSystem();
 
@@ -28,7 +29,9 @@ namespace lwmeta {
         void renderGameObjects(FrameInfo &frameInfo);
 
     private:
-        void createPipelineLayout(VkDescriptorSetLayout globalSetLayout);
+        AssetsSystem &assetsSystem;
+
+        void createPipelineLayout(VkDescriptorSetLayout globalSetLayout, VkDescriptorSetLayout cubeMapSetLayout);
 
         void createPipeline(VkRenderPass renderPass);
 

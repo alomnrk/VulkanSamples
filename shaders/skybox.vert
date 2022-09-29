@@ -6,7 +6,7 @@ layout(location = 2) in vec3 normal;
 layout(location = 3) in vec2 uv;
 
 layout(location = 0) out vec3 fragColor;
-layout(location = 1) out vec2 fragUV;
+layout(location = 1) out vec3 fragUVW;
 
 struct PointLight {
   vec4 position; // ignore w
@@ -37,5 +37,6 @@ void main() {
   gl_Position = ubo.projection * rotView * positionWorld;
 
   fragColor = color;
-  fragUV = uv;
+  fragUVW = position;
+  fragUVW.xy *= -1;
 }

@@ -5,11 +5,13 @@
 #include "CubeMap.h"
 #include "../external/stb/stb_image.h"
 #include "buffer.h"
-
+#include <iostream>
 
 namespace lwmeta {
 
-    CubeMap::CubeMap(Device &device, const std::vector<char *> &fileNames) : device{device} {
+    CubeMap::CubeMap(Device &device, const std::vector<char *> &fileNames, id_t cubeMapId) : device{device} {
+        id = cubeMapId;
+
         int prevWidth = -1;
         int prevHeight = -1;
         int bytesPerPixel;
@@ -45,16 +47,17 @@ namespace lwmeta {
 
         stagingBuffer.map();
         for (int i = 0; i < NUMBER_OF_CUBEMAP_IMAGES; i++) {
-            stagingBuffer.writeToBuffer(files[i], layerSize, layerSize * i);
+            stagingBuffer.writeToBuffer(files[i], layerSize * 4, layerSize * i * 4);
         }
 
         VkFormat format = VK_FORMAT_R8G8B8A8_SRGB;
 
         VkImageCreateInfo imageInfo = {};
         imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+        imageInfo.flags = VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT;
         imageInfo.imageType = VK_IMAGE_TYPE_2D;
         imageInfo.format = format;
-        imageInfo.mipLevels = 0; //?
+        imageInfo.mipLevels = 1; //?
         imageInfo.arrayLayers = NUMBER_OF_CUBEMAP_IMAGES;
         imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
         imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
@@ -67,7 +70,8 @@ namespace lwmeta {
         device.createImageWithInfo(imageInfo, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, image, imageMemory);
         transitionImageLayout(VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
         device.copyBufferToImage(stagingBuffer.getBuffer(), image, static_cast<u_int32_t>(width), static_cast<u_int32_t>(height), NUMBER_OF_CUBEMAP_IMAGES);
-
+        transitionImageLayout(VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+        imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 //        TransitionImageLayout
 //                (
 //                        VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
@@ -78,14 +82,14 @@ namespace lwmeta {
         samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
         samplerInfo.magFilter = VK_FILTER_LINEAR;
         samplerInfo.minFilter = VK_FILTER_LINEAR;
-        samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+        samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST;
         samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
         samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
         samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
         samplerInfo.mipLodBias = 0.0f;
         samplerInfo.compareOp = VK_COMPARE_OP_NEVER;
         samplerInfo.minLod = 0.0f;
-        samplerInfo.maxLod = static_cast<float>(mipLevels);
+        samplerInfo.maxLod = 1; //?
         samplerInfo.maxAnisotropy = 4.0;
         samplerInfo.anisotropyEnable = VK_TRUE;
         samplerInfo.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
@@ -100,12 +104,15 @@ namespace lwmeta {
         imageViewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
         imageViewInfo.subresourceRange.baseMipLevel = 0;
         imageViewInfo.subresourceRange.baseArrayLayer = 0;
-        imageViewInfo.subresourceRange.layerCount = 1;
-        imageViewInfo.subresourceRange.levelCount = mipLevels;
+        imageViewInfo.subresourceRange.layerCount = 6;
+        imageViewInfo.subresourceRange.levelCount = 1; //?
         imageViewInfo.image = image;
 
-        vkCreateImageView(device.device(), &imageViewInfo, nullptr, &imageView);
-
+        auto result = vkCreateImageView(device.device(), &imageViewInfo, nullptr, &imageView);
+        if (result != VK_SUCCESS)
+        {
+            std::cout << ("failed to create image view!") << std::endl;
+        }
         for (int i = 0; i < NUMBER_OF_CUBEMAP_IMAGES; i++) {
             stbi_image_free(files[i]);
         }
@@ -131,9 +138,9 @@ namespace lwmeta {
         barrier.image = image;
         barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
         barrier.subresourceRange.baseMipLevel = 0;
-        barrier.subresourceRange.levelCount = mipLevels;
+        barrier.subresourceRange.levelCount = 1; //mip
         barrier.subresourceRange.baseArrayLayer = 0;
-        barrier.subresourceRange.layerCount = 1;
+        barrier.subresourceRange.layerCount = 6;
 
         VkPipelineStageFlags sourceStage;
         VkPipelineStageFlags destinationStage;

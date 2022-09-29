@@ -1,7 +1,7 @@
 #version 450
 
 layout (location = 0) in vec3 fragColor;
-layout(location = 1) in vec2 fragUV;
+layout(location = 1) in vec3 fragUVW;
 
 layout (location = 0) out vec4 outColor;
 
@@ -19,12 +19,12 @@ layout(set = 0, binding = 0) uniform GlobalUbo {
   int numLights;
 } ubo;
 
-layout(set = 1, binding = 0) uniform sampler2D image;
+layout(set = 1, binding = 0) uniform samplerCube samplerCubeMap;
 
 layout(push_constant) uniform Push {
   mat4 modelMatrix;
 } push;
 
 void main() {
-  outColor = vec4(fragColor, 1);
+  outColor = texture(samplerCubeMap, fragUVW);
 }
