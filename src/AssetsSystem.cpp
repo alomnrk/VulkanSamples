@@ -45,5 +45,10 @@ namespace lwmeta{
             auto &texture = kv.second;
             delete texture;
         }
+
+        for (auto& kv : cubeMaps) {
+            auto &cubeMap = kv.second;
+            delete cubeMap;
+        }
     }
 }

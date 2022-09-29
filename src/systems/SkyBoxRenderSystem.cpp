@@ -146,5 +146,6 @@ namespace lwmeta {
 
     SkyBoxRenderSystem::~SkyBoxRenderSystem() {
         //todo
+        vkDestroyPipelineLayout(device.device(), pipelineLayout, nullptr);
     }
 }
