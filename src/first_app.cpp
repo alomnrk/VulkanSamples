@@ -6,6 +6,7 @@
 #include "systems/point_light_system.h"
 #include "systems/simple_render_system.h"
 #include "systems/SkyBoxRenderSystem.h"
+#include "systems/BlackHoleRenderSystem.h"
 
 // libs
 #define GLM_FORCE_RADIANS
@@ -35,6 +36,7 @@ FirstApp::FirstApp() {
 
     textureSetLayout = DescriptorSetLayout::Builder(device)
             .addBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
+            .addBinding(1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
             .build();
 
 //    texture2SetLayout = DescriptorSetLayout::Builder(device)
@@ -42,16 +44,21 @@ FirstApp::FirstApp() {
 //            .build();
 
     auto cubeMapId = assetSystem.AddCubeMap({
-        "../textures/skyboxes/yokohama/right.jpg",
-        "../textures/skyboxes/yokohama/left.jpg",
-        "../textures/skyboxes/yokohama/up.jpg",
-        "../textures/skyboxes/yokohama/bottom.jpg",
-        "../textures/skyboxes/yokohama/far.jpg",
-        "../textures/skyboxes/yokohama/near.jpg",
+        "../textures/skyboxes/milkyway/right.jpg",
+        "../textures/skyboxes/milkyway/left.jpg",
+        "../textures/skyboxes/milkyway/up.jpg",
+        "../textures/skyboxes/milkyway/bottom.jpg",
+        "../textures/skyboxes/milkyway/far.jpg",
+        "../textures/skyboxes/milkyway/near.jpg",
     });
     auto testMaterialId = assetSystem.CreateCubeMapMaterial(cubeMapId, textureSetLayout.get(), globalPool.get());
-    skyBox.materialId = testMaterialId;
+//    skyBox.materialsId.push_back(testMaterialId);
 
+    auto diskTexture = assetSystem.AddTexture("../textures/space.jpg");
+    auto diskMaterial = assetSystem.CreateTextureMaterial(diskTexture, 1, textureSetLayout.get(), globalPool.get());
+
+    auto blacHoleMat = assetSystem.CreateBlackHoleMaterial(cubeMapId, diskTexture, textureSetLayout.get(), globalPool.get());
+    skyBox.materialsId.push_back(blacHoleMat);
     loadGameObjects();
 }
 
@@ -95,11 +102,15 @@ void FirstApp::run() {
           renderer.getSwapChainRenderPass(),
           globalSetLayout->getDescriptorSetLayout()};
 
-    SkyBoxRenderSystem skyBoxRenderSystem{
+//    SkyBoxRenderSystem skyBoxRenderSystem{
+//            device,
+//            renderer.getSwapChainRenderPass(),
+//            globalSetLayout->getDescriptorSetLayout(), textureSetLayout->getDescriptorSetLayout(), assetSystem};
+
+    BlackHoleRenderSystem blackHoleRenderSystem{
             device,
             renderer.getSwapChainRenderPass(),
             globalSetLayout->getDescriptorSetLayout(), textureSetLayout->getDescriptorSetLayout(), assetSystem};
-
 
 
 
@@ -110,6 +121,7 @@ void FirstApp::run() {
   KeyboardMovementController cameraController{};
 
   auto currentTime = std::chrono::high_resolution_clock::now();
+  auto currentTime2 = std::chrono::high_resolution_clock::now();
   while (!window.shouldClose()) {
     glfwPollEvents();
 
@@ -139,17 +151,17 @@ void FirstApp::run() {
       ubo.projection = camera.getProjection();
       ubo.view = camera.getView();
       ubo.inverseView = camera.getInverseView();
-      pointLightSystem.update(frameInfo, ubo);
+        ubo.time = std::chrono::duration<float, std::chrono::seconds::period>(std::chrono::high_resolution_clock::now() - currentTime2).count();
+        pointLightSystem.update(frameInfo, ubo);
       uboBuffers[frameIndex]->writeToBuffer(&ubo);
       uboBuffers[frameIndex]->flush();
-
       // render
       renderer.beginSwapChainRenderPass(commandBuffer);
 
       // order here matters
-      skyBoxRenderSystem.renderGameObjects(frameInfo);
-      simpleRenderSystem.renderGameObjects(frameInfo);
-      pointLightSystem.render(frameInfo);
+      blackHoleRenderSystem.renderGameObjects(frameInfo);
+//      simpleRenderSystem.renderGameObjects(frameInfo);
+//      pointLightSystem.render(frameInfo);
 
 
       renderer.endSwapChainRenderPass(commandBuffer);
@@ -163,10 +175,10 @@ void FirstApp::run() {
 
 void FirstApp::loadGameObjects() {
     auto testTextureId = assetSystem.AddTexture("../textures/test2.jpg");
-    auto testMaterialId = assetSystem.CreateTextureMaterial(testTextureId, textureSetLayout.get(), globalPool.get());
+    auto testMaterialId = assetSystem.CreateTextureMaterial(testTextureId, 0, textureSetLayout.get(), globalPool.get());
 
     auto testTexture2Id = assetSystem.AddTexture("../textures/test.png");
-    auto testMaterial2Id = assetSystem.CreateTextureMaterial(testTexture2Id, textureSetLayout.get(), globalPool.get());
+    auto testMaterial2Id = assetSystem.CreateTextureMaterial(testTexture2Id, 0, textureSetLayout.get(), globalPool.get());
 
   std::shared_ptr<Model> model =
       Model::createModelFromFile(device, "models/flat_vase.obj");
@@ -174,7 +186,7 @@ void FirstApp::loadGameObjects() {
   flatVase.model = model;
   flatVase.transform.translation = {-.5f, .5f, 0.f};
   flatVase.transform.scale = {3.f, 1.5f, 3.f};
-  flatVase.materialId = testMaterialId; //material
+  flatVase.materialsId.push_back(testMaterialId); //material
   gameObjects.emplace(flatVase.getId(), std::move(flatVase));
 
   model = Model::createModelFromFile(device, "models/smooth_vase.obj");
@@ -182,7 +194,7 @@ void FirstApp::loadGameObjects() {
   smoothVase.model = model;
   smoothVase.transform.translation = {.5f, .5f, 0.f};
   smoothVase.transform.scale = {3.f, 1.5f, 3.f};
-    smoothVase.materialId = testMaterial2Id; //material
+  smoothVase.materialsId.push_back(testMaterial2Id); //material
   gameObjects.emplace(smoothVase.getId(), std::move(smoothVase));
 
 //  model = Model::createModelFromFile(device, "models/quad.obj");

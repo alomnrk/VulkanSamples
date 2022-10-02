@@ -14,7 +14,7 @@
 #include <locale>
 
 namespace lwmeta {
-    Texture::Texture(Device &device, const std::string &filepath, id_t textureId) : device{device} {
+    Texture::Texture(Device &device, const std::string &filepath, id_t textureId, VkSamplerAddressMode samplerAddressMode) : device{device} {
         id = textureId;
 
         int channels;
@@ -65,9 +65,9 @@ namespace lwmeta {
         samplerInfo.magFilter = VK_FILTER_LINEAR;
         samplerInfo.minFilter = VK_FILTER_LINEAR;
         samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
-        samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
-        samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
-        samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+        samplerInfo.addressModeU = samplerAddressMode;
+        samplerInfo.addressModeV = samplerAddressMode;
+        samplerInfo.addressModeW = samplerAddressMode;
         samplerInfo.mipLodBias = 0.0f;
         samplerInfo.compareOp = VK_COMPARE_OP_NEVER;
         samplerInfo.minLod = 0.0f;

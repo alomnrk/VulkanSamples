@@ -1,19 +1,17 @@
 //
-// Created by Artem Ustinov on 26.09.2022.
+// Created by Artem Ustinov on 29.09.2022.
 //
 
-#include "SkyBoxRenderSystem.h"
-#include "../model.h"
-#include "../AssetsSystem.h"
+#include "BlackHoleRenderSystem.h"
 
-namespace lwmeta {
 
+namespace lwmeta{
     struct SkyBoxPushConstants {
         glm::mat4 modelMatrix{1.f};
     };
 
 
-    void SkyBoxRenderSystem::createModel(){
+    void BlackHoleRenderSystem::createModel(){
         Model::Builder modelBuilder{};
         modelBuilder.vertices =
                 {
@@ -61,7 +59,7 @@ namespace lwmeta {
 
 
 
-    SkyBoxRenderSystem::SkyBoxRenderSystem(
+    BlackHoleRenderSystem::BlackHoleRenderSystem(
             Device& device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout, VkDescriptorSetLayout textureSetLayout, AssetsSystem& assetsSystem)
             : device{device}, assetsSystem{assetsSystem} {
         createModel();
@@ -69,7 +67,7 @@ namespace lwmeta {
         createPipeline(renderPass);
     }
 
-    void SkyBoxRenderSystem::createPipelineLayout(VkDescriptorSetLayout globalSetLayout, VkDescriptorSetLayout cubeMapSetLayout) {
+    void BlackHoleRenderSystem::createPipelineLayout(VkDescriptorSetLayout globalSetLayout, VkDescriptorSetLayout cubeMapSetLayout) {
         VkPushConstantRange pushConstantRange{};
         pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
         pushConstantRange.offset = 0;
@@ -89,7 +87,7 @@ namespace lwmeta {
         }
     }
 
-    void SkyBoxRenderSystem::createPipeline(VkRenderPass renderPass) {
+    void BlackHoleRenderSystem::createPipeline(VkRenderPass renderPass) {
         assert(pipelineLayout != nullptr && "Cannot create pipeline before pipeline layout");
 
         PipelineConfigInfo pipelineConfig{};
@@ -104,7 +102,7 @@ namespace lwmeta {
     }
 
 
-    void SkyBoxRenderSystem::renderGameObjects(FrameInfo& frameInfo) {
+    void BlackHoleRenderSystem::renderGameObjects(FrameInfo& frameInfo) {
         pipeline->bind(frameInfo.commandBuffer);
 
         vkCmdBindDescriptorSets(
@@ -144,7 +142,7 @@ namespace lwmeta {
         skyBoxModel->draw(frameInfo.commandBuffer);
     }
 
-    SkyBoxRenderSystem::~SkyBoxRenderSystem() {
+    BlackHoleRenderSystem::~BlackHoleRenderSystem() {
         //todo
         vkDestroyPipelineLayout(device.device(), pipelineLayout, nullptr);
     }

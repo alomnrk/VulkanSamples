@@ -97,7 +97,7 @@ void SimpleRenderSystem::renderGameObjects(FrameInfo& frameInfo) {
               pipelineLayout,
               1,
               1,
-              &assetSystem.GetMaterial(obj.materialId)->descriptorSet,
+              &assetSystem.GetMaterial(obj.materialsId[0])->descriptorSet,
               0,
               nullptr);
 

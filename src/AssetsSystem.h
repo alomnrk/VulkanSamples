@@ -34,7 +34,7 @@ protected:
 
     struct TextureMaterial : Material{
     public:
-        TextureMaterial(id_t materialId, Texture* texture, DescriptorSetLayout* layout, DescriptorPool* pool) : Material(materialId){
+        TextureMaterial(id_t materialId, Texture* texture, uint32_t binding, DescriptorSetLayout* layout, DescriptorPool* pool) : Material(materialId){
             id = materialId;
 
             VkDescriptorImageInfo imageInfo;
@@ -44,36 +44,60 @@ protected:
 
             std::cout << "create material" << std::endl;
             DescriptorWriter(*layout, *pool)
-                    .writeImage(0, &imageInfo)
+                    .writeImage(binding, &imageInfo)
                     .build(descriptorSet);
             std::cout << "finish create material" << std::endl;
         }
 
-        static TextureMaterial* createMaterial(Texture* texture, DescriptorSetLayout* layout, DescriptorPool* pool) {
+        static TextureMaterial* createMaterial(Texture* texture, uint32_t binding, DescriptorSetLayout* layout, DescriptorPool* pool) {
             static id_t currentId = 0;
-            return new TextureMaterial(currentId++, texture, layout, pool);
+            return new TextureMaterial(currentId++, texture, binding, layout, pool);
         }
     };
 
-    struct SkyBoxMaterial : Material{
-    SkyBoxMaterial(id_t materialId, CubeMap* cubeMap, DescriptorSetLayout* layout, DescriptorPool* pool) : Material(materialId){
-        id = materialId;
+    struct SkyBoxMaterial : Material {
+        SkyBoxMaterial(id_t materialId, CubeMap *cubeMap, DescriptorSetLayout *layout, DescriptorPool *pool) : Material(
+                materialId) {
+            id = materialId;
 
-        VkDescriptorImageInfo imageInfo;
-        imageInfo.sampler = cubeMap->getSampler();
-        imageInfo.imageView = cubeMap->getImageView();
-        imageInfo.imageLayout = cubeMap->getImageLayout();
+            VkDescriptorImageInfo imageInfo;
+            imageInfo.sampler = cubeMap->getSampler();
+            imageInfo.imageView = cubeMap->getImageView();
+            imageInfo.imageLayout = cubeMap->getImageLayout();
 
-        std::cout << "create material" << std::endl;
-        DescriptorWriter(*layout, *pool)
-                .writeImage(0, &imageInfo)
-                .build(descriptorSet);
-        std::cout << "finish create material" << std::endl;
-    }
+            std::cout << "create material" << std::endl;
+            DescriptorWriter(*layout, *pool)
+                    .writeImage(0, &imageInfo)
+                    .build(descriptorSet);
+            std::cout << "finish create material" << std::endl;
+        }
+    };
 
-    static SkyBoxMaterial* createMaterial(CubeMap* cubeMap, DescriptorSetLayout* layout, DescriptorPool* pool) {
+        struct BlackHoleMaterial : Material{
+            BlackHoleMaterial(id_t materialId, CubeMap* cubeMap, Texture* texture, DescriptorSetLayout* layout, DescriptorPool* pool) : Material(materialId){
+                id = materialId;
+
+                VkDescriptorImageInfo imageInfo;
+                imageInfo.sampler = cubeMap->getSampler();
+                imageInfo.imageView = cubeMap->getImageView();
+                imageInfo.imageLayout = cubeMap->getImageLayout();
+
+                VkDescriptorImageInfo diskInfo;
+                diskInfo.sampler = texture->getSampler();
+                diskInfo.imageView = texture->getImageView();
+                diskInfo.imageLayout = texture->getImageLayout();
+
+                std::cout << "create material" << std::endl;
+                DescriptorWriter(*layout, *pool)
+                        .writeImage(0, &imageInfo)
+                        .writeImage(1, &diskInfo)
+                        .build(descriptorSet);
+                std::cout << "finish create material" << std::endl;
+            }
+
+    static BlackHoleMaterial* createMaterial(CubeMap* cubeMap, Texture* texture, DescriptorSetLayout* layout, DescriptorPool* pool) {
         static id_t currentId = 0;
-        return new SkyBoxMaterial(currentId++, cubeMap, layout, pool);
+        return new BlackHoleMaterial(currentId++, cubeMap, texture, layout, pool);
     }
 };
 
@@ -93,8 +117,9 @@ public:
     id_t AddTexture(const std::string filepath);
     id_t AddCubeMap(const std::vector<char*> &fileNames);
 
-    id_t CreateTextureMaterial(id_t texture_id, DescriptorSetLayout* layout, DescriptorPool* pool);
+    id_t CreateTextureMaterial(id_t texture_id, uint32_t binding, DescriptorSetLayout* layout, DescriptorPool* pool);
     id_t CreateCubeMapMaterial(id_t cubeMap_id, DescriptorSetLayout* layout, DescriptorPool* pool);
+    id_t CreateBlackHoleMaterial(id_t cubeMap_id, id_t disktexture, DescriptorSetLayout* layout, DescriptorPool* pool);
 
 
     Material* GetMaterial(id_t material_id);
@@ -108,5 +133,6 @@ private:
     std::unordered_map<id_t, CubeMap*> cubeMaps;
 };
 }
+
 
 #endif //LWMETAVERSE_ASSETSSYSTEM_H

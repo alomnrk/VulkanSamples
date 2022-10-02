@@ -19,14 +19,20 @@ namespace lwmeta{
         return cubeMap->getId();
     }
 
-    id_t AssetsSystem::CreateTextureMaterial(uint32_t texture_id, DescriptorSetLayout* layout, DescriptorPool* pool) {
-        auto material = new TextureMaterial(currentId++, textures.at(texture_id), layout, pool);
+    id_t AssetsSystem::CreateTextureMaterial(uint32_t texture_id, uint32_t binding, DescriptorSetLayout* layout, DescriptorPool* pool) {
+        auto material = new TextureMaterial(currentId++, textures.at(texture_id), binding, layout, pool);
         materials.emplace(material->getId(), material);
         return material->getId();
     }
 
     id_t AssetsSystem::CreateCubeMapMaterial(uint32_t cubeMap_id, DescriptorSetLayout* layout, DescriptorPool* pool) {
         auto material = new SkyBoxMaterial(currentId++, cubeMaps.at(cubeMap_id), layout, pool);
+        materials.emplace(material->getId(), material);
+        return material->getId();
+    }
+
+    id_t AssetsSystem::CreateBlackHoleMaterial(id_t cubeMap_id, id_t disktexture, DescriptorSetLayout* layout, DescriptorPool* pool){
+        auto material = new BlackHoleMaterial(currentId++, cubeMaps.at(cubeMap_id), textures.at(disktexture), layout, pool);
         materials.emplace(material->getId(), material);
         return material->getId();
     }
