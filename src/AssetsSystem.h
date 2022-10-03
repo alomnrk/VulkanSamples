@@ -11,30 +11,31 @@
 #include "CubeMap.h"
 #include <iostream>
 
-namespace lwmeta{
+namespace lwmeta {
 
-struct Material{
-public:
-    Material(id_t materialId){
-        id = materialId;
-    }
+    struct Material {
+    public:
+        Material(id_t materialId) {
+            id = materialId;
+        }
 
 //    static Material* createMaterial(Texture* texture, DescriptorSetLayout* layout, DescriptorPool* pool) {
 //        static id_t currentId = 0;
 //        return new Material(currentId++, texture, layout, pool);
 //    }
 
-    id_t getId() { return id; }
+        id_t getId() { return id; }
 
-    VkDescriptorSet descriptorSet;
+        VkDescriptorSet descriptorSet;
 
-protected:
-    id_t id;
-};
+    protected:
+        id_t id;
+    };
 
-    struct TextureMaterial : Material{
+    struct TextureMaterial : Material {
     public:
-        TextureMaterial(id_t materialId, Texture* texture, uint32_t binding, DescriptorSetLayout* layout, DescriptorPool* pool) : Material(materialId){
+        TextureMaterial(id_t materialId, Texture *texture, uint32_t binding, DescriptorSetLayout *layout,
+                        DescriptorPool *pool) : Material(materialId) {
             id = materialId;
 
             VkDescriptorImageInfo imageInfo;
@@ -49,7 +50,8 @@ protected:
             std::cout << "finish create material" << std::endl;
         }
 
-        static TextureMaterial* createMaterial(Texture* texture, uint32_t binding, DescriptorSetLayout* layout, DescriptorPool* pool) {
+        static TextureMaterial *
+        createMaterial(Texture *texture, uint32_t binding, DescriptorSetLayout *layout, DescriptorPool *pool) {
             static id_t currentId = 0;
             return new TextureMaterial(currentId++, texture, binding, layout, pool);
         }
@@ -73,65 +75,100 @@ protected:
         }
     };
 
-        struct BlackHoleMaterial : Material{
-            BlackHoleMaterial(id_t materialId, CubeMap* cubeMap, Texture* texture, DescriptorSetLayout* layout, DescriptorPool* pool) : Material(materialId){
-                id = materialId;
+    struct BlackHoleMaterial : Material {
+        BlackHoleMaterial(id_t materialId, CubeMap *cubeMap, Texture *texture, DescriptorSetLayout *layout,
+                          DescriptorPool *pool) : Material(materialId) {
+            id = materialId;
 
-                VkDescriptorImageInfo imageInfo;
-                imageInfo.sampler = cubeMap->getSampler();
-                imageInfo.imageView = cubeMap->getImageView();
-                imageInfo.imageLayout = cubeMap->getImageLayout();
+            VkDescriptorImageInfo imageInfo;
+            imageInfo.sampler = cubeMap->getSampler();
+            imageInfo.imageView = cubeMap->getImageView();
+            imageInfo.imageLayout = cubeMap->getImageLayout();
 
-                VkDescriptorImageInfo diskInfo;
-                diskInfo.sampler = texture->getSampler();
-                diskInfo.imageView = texture->getImageView();
-                diskInfo.imageLayout = texture->getImageLayout();
+            VkDescriptorImageInfo diskInfo;
+            diskInfo.sampler = texture->getSampler();
+            diskInfo.imageView = texture->getImageView();
+            diskInfo.imageLayout = texture->getImageLayout();
 
-                std::cout << "create material" << std::endl;
-                DescriptorWriter(*layout, *pool)
-                        .writeImage(0, &imageInfo)
-                        .writeImage(1, &diskInfo)
-                        .build(descriptorSet);
-                std::cout << "finish create material" << std::endl;
-            }
+            std::cout << "create material" << std::endl;
+            DescriptorWriter(*layout, *pool)
+                    .writeImage(0, &imageInfo)
+                    .writeImage(1, &diskInfo)
+                    .build(descriptorSet);
+            std::cout << "finish create material" << std::endl;
+        }
 
-    static BlackHoleMaterial* createMaterial(CubeMap* cubeMap, Texture* texture, DescriptorSetLayout* layout, DescriptorPool* pool) {
-        static id_t currentId = 0;
-        return new BlackHoleMaterial(currentId++, cubeMap, texture, layout, pool);
-    }
-};
-
-
-class AssetsSystem {
-public:
-    using id_t = unsigned int;
+        static BlackHoleMaterial *
+        createMaterial(CubeMap *cubeMap, Texture *texture, DescriptorSetLayout *layout, DescriptorPool *pool) {
+            static id_t currentId = 0;
+            return new BlackHoleMaterial(currentId++, cubeMap, texture, layout, pool);
+        }
+    };
 
 
+    struct LitMaterial : Material {
+        LitMaterial(id_t materialId, Texture *texture, DescriptorSetLayout *layout,
+                          DescriptorPool *pool) : Material(materialId) {
+            id = materialId;
 
-    AssetsSystem(Device &device);
-    ~AssetsSystem();
+            VkDescriptorImageInfo imageInfo;
+            imageInfo.sampler = texture->getSampler();
+            imageInfo.imageView = texture->getImageView();
+            imageInfo.imageLayout = texture->getImageLayout();
 
-    AssetsSystem(const AssetsSystem &) = delete;
-    AssetsSystem &operator=(const AssetsSystem &) = delete;
-
-    id_t AddTexture(const std::string filepath);
-    id_t AddCubeMap(const std::vector<char*> &fileNames);
-
-    id_t CreateTextureMaterial(id_t texture_id, uint32_t binding, DescriptorSetLayout* layout, DescriptorPool* pool);
-    id_t CreateCubeMapMaterial(id_t cubeMap_id, DescriptorSetLayout* layout, DescriptorPool* pool);
-    id_t CreateBlackHoleMaterial(id_t cubeMap_id, id_t disktexture, DescriptorSetLayout* layout, DescriptorPool* pool);
+            std::cout << "create material" << std::endl;
+            DescriptorWriter(*layout, *pool)
+                    .writeImage(0, &imageInfo)
+                    .build(descriptorSet);
+            std::cout << "finish create material" << std::endl;
+        }
+    };
 
 
-    Material* GetMaterial(id_t material_id);
+    class AssetsSystem {
+    public:
+        using id_t = unsigned int;
 
-private:
-    Device &device;
-    uint32_t currentId = 0;
 
-    std::unordered_map<id_t, Texture*> textures;
-    std::unordered_map<id_t, Material*> materials;
-    std::unordered_map<id_t, CubeMap*> cubeMaps;
-};
+        AssetsSystem(Device &device);
+
+        ~AssetsSystem();
+
+        AssetsSystem(const AssetsSystem &) = delete;
+
+        AssetsSystem &operator=(const AssetsSystem &) = delete;
+
+        id_t AddTexture(const std::string filepath);
+
+        id_t AddCubeMap(const std::vector<char *> &fileNames);
+
+        id_t AddModel(Model *model);
+
+        Model* GetModel(id_t modelId);
+
+        id_t
+        CreateTextureMaterial(id_t texture_id, uint32_t binding, DescriptorSetLayout *layout, DescriptorPool *pool);
+
+        id_t CreateCubeMapMaterial(id_t cubeMap_id, DescriptorSetLayout *layout, DescriptorPool *pool);
+
+        id_t
+        CreateBlackHoleMaterial(id_t cubeMap_id, id_t disktexture, DescriptorSetLayout *layout, DescriptorPool *pool);
+
+        id_t
+        CreateLitMaterial(id_t texture, DescriptorSetLayout *layout, DescriptorPool *pool);
+
+
+        Material *GetMaterial(id_t material_id);
+
+    private:
+        Device &device;
+        uint32_t currentId = 0;
+
+        std::unordered_map<id_t, Texture*> textures;
+        std::unordered_map<id_t, Material*> materials;
+        std::unordered_map<id_t, CubeMap*> cubeMaps;
+        std::unordered_map<id_t, Model*> models;
+    };
 }
 
 

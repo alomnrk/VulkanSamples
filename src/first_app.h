@@ -6,6 +6,7 @@
 #include "renderer.h"
 #include "window.h"
 #include "AssetsSystem.h"
+#include "Scene.h"
 
 // std
 #include <memory>
@@ -34,10 +35,12 @@ class FirstApp {
 
   // note: order of declarations matters
   std::unique_ptr<DescriptorPool> globalPool{};
-  GameObject::Map gameObjects;
-    GameObject skyBox{GameObject::createGameObject()};
+//  GameObject::Map gameObjects;
+//    GameObject skyBox{GameObject::createGameObject()};
 
   std::unique_ptr<DescriptorSetLayout> textureSetLayout; //to RenderPipeline
   AssetsSystem assetSystem{device};
+
+  Scene* scene;
 };
 }  // namespace lwmeta

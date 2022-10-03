@@ -17,19 +17,23 @@ namespace lwmeta {
     public:
         using id_t = unsigned int;
 
-        CubeMap(Device &device, const std::vector<char*> &fileNames, id_t cubeMapId);
+        CubeMap(Device &device, const std::vector<char *> &fileNames, id_t cubeMapId);
+
         ~CubeMap();
 
         VkSampler getSampler() { return sampler; }
+
         VkImageView getImageView() { return imageView; }
+
         VkImageLayout getImageLayout() { return imageLayout; }
 
         id_t getId() { return id; }
 
-        static CubeMap* createTexture(Device &device, const std::vector<char*> &fileNames) {
+        static CubeMap *createTexture(Device &device, const std::vector<char *> &fileNames) {
             static id_t currentId = 0;
             return new CubeMap(device, fileNames, currentId++);
         }
+
     private:
         void transitionImageLayout(VkImageLayout oldLayout, VkImageLayout newLayout);
 

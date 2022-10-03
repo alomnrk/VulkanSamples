@@ -12,16 +12,16 @@
 #include "../AssetsSystem.h"
 
 namespace lwmeta {
-class SimpleRenderSystem {
+class LitRenderSystem {
  public:
-  SimpleRenderSystem(
+  LitRenderSystem(
           Device &device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout, VkDescriptorSetLayout textureSetLayout, AssetsSystem &assetSystem);
-  ~SimpleRenderSystem();
+  ~LitRenderSystem();
 
-  SimpleRenderSystem(const SimpleRenderSystem &) = delete;
-  SimpleRenderSystem &operator=(const SimpleRenderSystem &) = delete;
+  LitRenderSystem(const LitRenderSystem &) = delete;
+  LitRenderSystem &operator=(const LitRenderSystem &) = delete;
 
-  void renderGameObjects(FrameInfo &frameInfo);
+  void renderGameObjects(FrameInfo &frameInfo, GameObject::Map &gameObjects);
 
  private:
   void createPipelineLayout(VkDescriptorSetLayout globalSetLayout, VkDescriptorSetLayout textureSetLayout);

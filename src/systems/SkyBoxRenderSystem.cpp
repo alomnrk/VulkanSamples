@@ -104,7 +104,7 @@ namespace lwmeta {
     }
 
 
-    void SkyBoxRenderSystem::renderGameObjects(FrameInfo& frameInfo) {
+    void SkyBoxRenderSystem::renderGameObjects(FrameInfo& frameInfo, GameObject &skybox) {
         pipeline->bind(frameInfo.commandBuffer);
 
         vkCmdBindDescriptorSets(
@@ -119,7 +119,7 @@ namespace lwmeta {
 
 
         SkyBoxPushConstants push{};
-        push.modelMatrix = frameInfo.skyBox.transform.rot4();
+        push.modelMatrix = skybox.transform.rot4();
 
         vkCmdPushConstants(
                 frameInfo.commandBuffer,
@@ -136,7 +136,7 @@ namespace lwmeta {
                 pipelineLayout,
                 1,
                 1,
-                &assetsSystem.GetMaterial(frameInfo.skyBox.materialsId[0])->descriptorSet,
+                &assetsSystem.GetMaterial(skybox.GetComponent<MaterialComponent>()->materialId)->descriptorSet,
                 0,
                 nullptr);
 

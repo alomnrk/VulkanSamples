@@ -37,11 +37,11 @@ Model::Model(Device &device, const Model::Builder &builder) : device{device} {
 
 Model::~Model() {}
 
-std::unique_ptr<Model> Model::createModelFromFile(
+Model* Model::createModelFromFile(
         Device &device, const std::string &filepath) {
   Builder builder{};
   builder.loadModel(ENGINE_DIR + filepath);
-  return std::make_unique<Model>(device, builder);
+  return new Model(device, builder);
 }
 
 void Model::createVertexBuffers(const std::vector<Vertex> &vertices) {

@@ -4,7 +4,6 @@
 
 #include "BlackHoleRenderSystem.h"
 
-
 namespace lwmeta{
     struct SkyBoxPushConstants {
         glm::mat4 modelMatrix{1.f};
@@ -102,7 +101,7 @@ namespace lwmeta{
     }
 
 
-    void BlackHoleRenderSystem::renderGameObjects(FrameInfo& frameInfo) {
+    void BlackHoleRenderSystem::renderGameObjects(FrameInfo& frameInfo, GameObject &skybox) {
         pipeline->bind(frameInfo.commandBuffer);
 
         vkCmdBindDescriptorSets(
@@ -117,7 +116,7 @@ namespace lwmeta{
 
 
         SkyBoxPushConstants push{};
-        push.modelMatrix = frameInfo.skyBox.transform.rot4();
+        push.modelMatrix = skybox.transform.rot4();
 
         vkCmdPushConstants(
                 frameInfo.commandBuffer,
@@ -134,7 +133,7 @@ namespace lwmeta{
                 pipelineLayout,
                 1,
                 1,
-                &assetsSystem.GetMaterial(frameInfo.skyBox.materialsId[0])->descriptorSet,
+                &assetsSystem.GetMaterial(skybox.GetComponent<MaterialComponent>()->materialId)->descriptorSet,
                 0,
                 nullptr);
 

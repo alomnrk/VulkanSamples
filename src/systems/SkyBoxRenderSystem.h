@@ -10,6 +10,7 @@
 #include "../pipeline.h"
 #include "../model.h"
 #include "../AssetsSystem.h"
+#include "../Scene.h"
 
 namespace lwmeta {
     class SkyBoxRenderSystem {
@@ -26,7 +27,7 @@ namespace lwmeta {
 
         SkyBoxRenderSystem &operator=(const SkyBoxRenderSystem &) = delete;
 
-        void renderGameObjects(FrameInfo &frameInfo);
+        void renderGameObjects(FrameInfo &frameInfo, GameObject &skybox);
 
     private:
         AssetsSystem &assetsSystem;
