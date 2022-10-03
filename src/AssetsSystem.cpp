@@ -76,5 +76,10 @@ namespace lwmeta {
             auto &cubeMap = kv.second;
             delete cubeMap;
         }
+
+        for (auto &kv: models) {
+            auto &model = kv.second;
+            delete model;
+        }
     }
 }
