@@ -56,7 +56,6 @@ namespace lwmeta {
                                                         "../textures/skyboxes/milkyway/near.jpg",
                                                 });
         auto testMaterialId = assetSystem.CreateCubeMapMaterial(cubeMapId, textureSetLayout.get(), globalPool.get());
-//    skyBox.materialsId.push_back(testMaterialId);
 
         auto diskTexture = assetSystem.AddTexture("../textures/space.jpg");
         auto diskMaterial = assetSystem.CreateTextureMaterial(diskTexture, 1, textureSetLayout.get(), globalPool.get());
@@ -68,8 +67,6 @@ namespace lwmeta {
         auto skybox = GameObject::createGameObjectPtr();
         skybox->AddComponent(new MaterialComponent(blacHoleMat));
         scene = new Scene(skybox);
-//        scene.skyBox = std::move(skybox);
-//         skyBox.materialsId.push_back(blacHoleMat);
         loadGameObjects();
     }
 
@@ -152,7 +149,6 @@ namespace lwmeta {
                         commandBuffer,
                         camera,
                         globalDescriptorSets[frameIndex],
-//                        gameObjects, skyBox
                        };
 
                 // update
@@ -190,38 +186,21 @@ namespace lwmeta {
         auto testTexture2Id = assetSystem.AddTexture("../textures/test.png");
         auto testMaterial2Id = assetSystem.CreateLitMaterial(testTexture2Id, textureSetLayout.get(), globalPool.get());
 
-//        std::shared_ptr<Model> model =
         uint32_t vaseFlatModelId = assetSystem.AddModel(Model::createModelFromFile(device, "models/flat_vase.obj"));
         auto flatVase = GameObject::createGameObject();
-
         flatVase.AddComponent<MaterialComponent>(new MaterialComponent(testMaterialId));
         flatVase.AddComponent<MeshComponent>(new MeshComponent(vaseFlatModelId));
-//        emplace(materials.emplace(material->getId(), material);
-//        flatVase.model = model;
         flatVase.transform.translation = {-.5f, .5f, 0.f};
         flatVase.transform.scale = {3.f, 1.5f, 3.f};
-//        flatVase.materialsId.push_back(testMaterialId); //material
         scene->AddLitObject(std::move(flatVase));
 
         uint32_t vaseSmoothModelId = assetSystem.AddModel(Model::createModelFromFile(device, "models/smooth_vase.obj"));
         auto smoothVase = GameObject::createGameObject();
         smoothVase.AddComponent<MaterialComponent>(new MaterialComponent(testMaterial2Id));
         smoothVase.AddComponent<MeshComponent>(new MeshComponent(vaseSmoothModelId));
-//        auto t = smoothVase.GetComponent<MaterialComponent>()->materialId;
-
-//        smoothVase.model = model;
         smoothVase.transform.translation = {.5f, .5f, 0.f};
         smoothVase.transform.scale = {3.f, 1.5f, 3.f};
-//        smoothVase.materialsId.push_back(testMaterial2Id); //material
-//        gameObjects.emplace(smoothVase.getId(), std::move(smoothVase));
         scene->AddLitObject(std::move(smoothVase));
-
-//  model = Model::createModelFromFile(device, "models/quad.obj");
-//  auto floor = GameObject::createGameObject();
-//  floor.model = model;
-//  floor.transform.translation = {0.f, .5f, 0.f};
-//  floor.transform.scale = {3.f, 1.f, 3.f};
-//  gameObjects.emplace(floor.getId(), std::move(floor));
 
         std::vector<glm::vec3> lightColors{
                 {1.f, .1f, .1f},
@@ -236,16 +215,13 @@ namespace lwmeta {
             auto pointLight = GameObject::createGameObject();
             auto plComponent = new PointLightComponent(0.2f, lightColors[i]);
             pointLight.AddComponent<PointLightComponent>(plComponent);
-//            auto pointLight = GameObject::makePointLight(0.2f);
-//
-//            pointLight.color = lightColors[i];
+
             pointLight.AddComponent<PointLightRendererComponent>(new PointLightRendererComponent(0.1f, plComponent));
             auto rotateLight = glm::rotate(
                     glm::mat4(1.f),
                     (i * glm::two_pi<float>()) / lightColors.size(),
                     {0.f, -1.f, 0.f});
             pointLight.transform.translation = glm::vec3(rotateLight * glm::vec4(-1.f, -1.f, -1.f, 1.f));
-//            gameObjects.emplace(pointLight.getId(), std::move(pointLight));
             scene->AddPointLight(std::move(pointLight));
         }
     }

@@ -88,29 +88,4 @@ namespace lwmeta {
         };
     }
 
-
-//    template<DerivedComponent T>
-//    id_t GameObject::AddComponent(T *component) {
-//        components.template emplace(current_component_id++, component);
-//        return current_component_id - 1;
-//    }
-
-//    template<DerivedComponent T>
-//    T* GameObject::GetComponent(){
-//        for (auto &kv: components){
-//            if(T *ptr = dynamic_cast<T*>(kv.second))
-//                return ptr;
-//        }
-//        return nullptr;
-//    }
-
-//GameObject GameObject::makePointLight(float intensity, float radius, glm::vec3 color) {
-//  GameObject gameObj = GameObject::createGameObject();
-//  gameObj.color = color;
-//  gameObj.transform.scale.x = radius;
-//  gameObj.pointLight = std::make_unique<PointLightComponent>();
-//  gameObj.pointLight->lightIntensity = intensity;
-//  return gameObj;
-//}
-
 }  // namespace lwmeta

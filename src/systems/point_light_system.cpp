@@ -124,7 +124,6 @@ namespace lwmeta {
             push.position = glm::vec4(obj.transform.translation, 1.f);
             auto plComponent = obj.GetComponent<PointLightRendererComponent>();
             push.color = glm::vec4(plComponent->pointLight->color, plComponent->pointLight->lightIntensity);
-//            push.radius = obj.transform.scale.x;
             push.radius = plComponent->radius;
 
             vkCmdPushConstants(
