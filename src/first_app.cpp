@@ -14,7 +14,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
-
+#include "systems/TransfusionRenderSystem.h"
 
 // std
 #include <array>
@@ -24,6 +24,7 @@
 
 
 #include "Texture.h"
+
 
 
 namespace lwmeta {
@@ -103,6 +104,13 @@ namespace lwmeta {
                 device,
                 renderer.getSwapChainRenderPass(),
                 globalSetLayout->getDescriptorSetLayout(), textureSetLayout->getDescriptorSetLayout(), assetSystem};
+
+        TransfusionRenderSystem transfusionRenderSystem{
+                device,
+                renderer.getSwapChainRenderPass(),
+                globalSetLayout->getDescriptorSetLayout(), textureSetLayout->getDescriptorSetLayout(), assetSystem};
+
+
         PointLightSystem pointLightSystem{
                 device,
                 renderer.getSwapChainRenderPass(),
@@ -165,8 +173,8 @@ namespace lwmeta {
                 renderer.beginSwapChainRenderPass(commandBuffer);
 
                 // order here matters
-                blackHoleRenderSystem.renderGameObjects(frameInfo, *scene->skyBox);
-      simpleRenderSystem.renderGameObjects(frameInfo, scene->litObjects);
+//                blackHoleRenderSystem.renderGameObjects(frameInfo, *scene->skyBox);
+                transfusionRenderSystem.renderGameObjects(frameInfo, scene->litObjects);
       pointLightSystem.render(frameInfo, scene->pointLights);
 
 
@@ -180,18 +188,19 @@ namespace lwmeta {
 
 
     void FirstApp::loadGameObjects() {
-        auto testTextureId = assetSystem.AddTexture("../textures/test2.jpg");
+        auto testTextureId = assetSystem.AddTexture("../textures/alfa_head_V3.1.png");
         auto testMaterialId = assetSystem.CreateLitMaterial(testTextureId, textureSetLayout.get(), globalPool.get());
 
         auto testTexture2Id = assetSystem.AddTexture("../textures/test.png");
         auto testMaterial2Id = assetSystem.CreateLitMaterial(testTexture2Id, textureSetLayout.get(), globalPool.get());
 
-        uint32_t vaseFlatModelId = assetSystem.AddModel(Model::createModelFromFile(device, "models/flat_vase.obj"));
+        uint32_t vaseFlatModelId = assetSystem.AddModel(Model::createModelFromFile(device, "models/head_v1.obj"));
+//        uint32_t vaseFlatModelId = assetSystem.AddModel(Model::createModelFromFile(device, "models/body_v1.obj"));
         auto flatVase = GameObject::createGameObject();
         flatVase.AddComponent<MaterialComponent>(new MaterialComponent(testMaterialId));
         flatVase.AddComponent<MeshComponent>(new MeshComponent(vaseFlatModelId));
         flatVase.transform.translation = {-.5f, .5f, 0.f};
-        flatVase.transform.scale = {3.f, 1.5f, 3.f};
+        flatVase.transform.scale = {1, 1, 1};
         scene->AddLitObject(std::move(flatVase));
 
         uint32_t vaseSmoothModelId = assetSystem.AddModel(Model::createModelFromFile(device, "models/smooth_vase.obj"));

@@ -9,7 +9,7 @@ add_executable(LWMetaverse src/main.cpp src/window.h src/window.cpp src/utils.h 
         src/game_object.h src/game_object.cpp src/frame_info.h src/device.h src/device.cpp
         src/descriptors.h src/descriptors.cpp src/camera.h src/camera.cpp src/buffer.h src/buffer.cpp
         src/keyboard_movement_controller.cpp src/keyboard_movement_controller.h src/first_app.h src/first_app.cpp
-        src/systems/point_light_system.h src/systems/point_light_system.cpp src/systems/LitRenderSystem.h src/systems/LitRenderSystem.cpp src/Texture.cpp src/Texture.h src/CubeMap.cpp src/CubeMap.h src/systems/SkyBoxRenderSystem.cpp src/systems/SkyBoxRenderSystem.h src/AssetsSystem.cpp src/AssetsSystem.h src/systems/BlackHoleRenderSystem.cpp src/systems/BlackHoleRenderSystem.h src/Scene.cpp src/Scene.h)
+        src/systems/point_light_system.h src/systems/point_light_system.cpp src/systems/LitRenderSystem.h src/systems/LitRenderSystem.cpp src/Texture.cpp src/Texture.h src/CubeMap.cpp src/CubeMap.h src/systems/SkyBoxRenderSystem.cpp src/systems/SkyBoxRenderSystem.h src/AssetsSystem.cpp src/AssetsSystem.h src/systems/BlackHoleRenderSystem.cpp src/systems/TransfusionRenderSystem.h src/systems/TransfusionRenderSystem.cpp src/systems/BlackHoleRenderSystem.h src/Scene.cpp src/Scene.h)
 
 #Vulkan
 find_package(Vulkan REQUIRED)
