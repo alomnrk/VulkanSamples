@@ -15,6 +15,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
 #include "systems/TransfusionRenderSystem.h"
+#include "systems/DissolveRenderSystem.h"
 
 // std
 #include <array>
@@ -105,7 +106,13 @@ namespace lwmeta {
                 renderer.getSwapChainRenderPass(),
                 globalSetLayout->getDescriptorSetLayout(), textureSetLayout->getDescriptorSetLayout(), assetSystem};
 
-        TransfusionRenderSystem transfusionRenderSystem{
+//        TransfusionRenderSystem transfusionRenderSystem{
+//                device,
+//                renderer.getSwapChainRenderPass(),
+//                globalSetLayout->getDescriptorSetLayout(), textureSetLayout->getDescriptorSetLayout(), assetSystem};
+
+
+        DissolveRenderSystem dissolveRenderSystem{
                 device,
                 renderer.getSwapChainRenderPass(),
                 globalSetLayout->getDescriptorSetLayout(), textureSetLayout->getDescriptorSetLayout(), assetSystem};
@@ -174,7 +181,7 @@ namespace lwmeta {
 
                 // order here matters
 //                blackHoleRenderSystem.renderGameObjects(frameInfo, *scene->skyBox);
-                transfusionRenderSystem.renderGameObjects(frameInfo, scene->litObjects);
+                dissolveRenderSystem.renderGameObjects(frameInfo, scene->litObjects);
       pointLightSystem.render(frameInfo, scene->pointLights);
 
 
