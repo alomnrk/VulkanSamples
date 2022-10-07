@@ -12,25 +12,34 @@
 #include "../AssetsSystem.h"
 
 namespace lwmeta {
-class DissolveRenderSystem {
- public:
-  DissolveRenderSystem(
-          Device &device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout, VkDescriptorSetLayout textureSetLayout, AssetsSystem &assetSystem);
-  ~DissolveRenderSystem();
+    class DissolveRenderSystem {
+    public:
+        DissolveRenderSystem(
+                Device &device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout,
+                AssetsSystem &assetSystem);
 
-  DissolveRenderSystem(const DissolveRenderSystem &) = delete;
-  DissolveRenderSystem &operator=(const DissolveRenderSystem &) = delete;
+        ~DissolveRenderSystem();
 
-  void renderGameObjects(FrameInfo &frameInfo, GameObject::Map &gameObjects);
+        DissolveRenderSystem(const DissolveRenderSystem &) = delete;
 
- private:
-  void createPipelineLayout(VkDescriptorSetLayout globalSetLayout, VkDescriptorSetLayout textureSetLayout);
-  void createPipeline(VkRenderPass renderPass);
+        DissolveRenderSystem &operator=(const DissolveRenderSystem &) = delete;
 
-  Device &device;
-  AssetsSystem &assetSystem;
+        void renderGameObjects(FrameInfo &frameInfo, GameObject::Map &gameObjects);
+        void renderGameObject(FrameInfo &frameInfo, GameObject &gameObject);
 
-  std::unique_ptr<Pipeline> pipeline;
-  VkPipelineLayout pipelineLayout;
-};
+
+        std::unique_ptr<DescriptorSetLayout> materialSetLayout;
+    private:
+        void createPipelineLayout(VkDescriptorSetLayout globalSetLayout);
+        void createMaterialLayout();
+        void createPipeline(VkRenderPass renderPass);
+
+        Device &device;
+        AssetsSystem &assetSystem;
+
+        std::unique_ptr<Pipeline> pipeline;
+        VkPipelineLayout pipelineLayout;
+
+
+    };
 }  // namespace lwmeta

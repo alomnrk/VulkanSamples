@@ -23,6 +23,9 @@ layout(set = 0, binding = 0) uniform GlobalUbo {
 } ubo;
 
 layout(set = 1, binding = 0) uniform sampler2D image;
+layout(set = 1, binding = 1) uniform MaterialUbo{
+  float strength;
+} materialUbo;
 
 layout(push_constant) uniform Push {
   mat4 modelMatrix;
@@ -94,7 +97,7 @@ void main() {
 //  float v = snoise(vec4(fragPosWorld.x * 20, fragPosWorld.y * 20, fragPosWorld.z * 20, ubo.time /3.f));
 //  vec3 cl = imageColor.rgb * imageColor.a + vec3(0, v, v) * (1 - imageColor.a) ;
 
-  float strength = (sin(ubo.time * 2) + 1) / 2.0f;
+  float strength = materialUbo.strength;
   float edgeWidth = 0.02f;
   vec3 edgeColor = vec3(0, 1, 1);
 

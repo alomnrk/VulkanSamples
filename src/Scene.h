@@ -22,6 +22,8 @@ namespace lwmeta {
         GameObject::Map litObjects;
         GameObject::Map pointLights;
         GameObject *skyBox;
+
+        std::unique_ptr<GameObject> player;
     };
 }
 

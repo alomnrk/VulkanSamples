@@ -20,10 +20,11 @@ namespace lwmeta {
     };
 
     DissolveRenderSystem::DissolveRenderSystem(
-            Device &device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout,
-            VkDescriptorSetLayout textureSetLayout, AssetsSystem &assetSystem)
+            Device &device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout, AssetsSystem &assetSystem)
             : device{device}, assetSystem{assetSystem} {
-        createPipelineLayout(globalSetLayout, textureSetLayout);
+
+        createMaterialLayout();
+        createPipelineLayout(globalSetLayout);
         createPipeline(renderPass);
     }
 
@@ -31,14 +32,21 @@ namespace lwmeta {
         vkDestroyPipelineLayout(device.device(), pipelineLayout, nullptr);
     }
 
-    void DissolveRenderSystem::createPipelineLayout(VkDescriptorSetLayout globalSetLayout,
-                                               VkDescriptorSetLayout textureSetLayout) {
+
+    void DissolveRenderSystem::createMaterialLayout(){
+        materialSetLayout = DescriptorSetLayout::Builder(device)
+                .addBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
+                .addBinding(1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_FRAGMENT_BIT)
+                .build();
+    }
+
+    void DissolveRenderSystem::createPipelineLayout(VkDescriptorSetLayout globalSetLayout) {
         VkPushConstantRange pushConstantRange{};
         pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
         pushConstantRange.offset = 0;
         pushConstantRange.size = sizeof(SimplePushConstantData);
 
-        std::vector<VkDescriptorSetLayout> descriptorSetLayouts{globalSetLayout, textureSetLayout};
+        std::vector<VkDescriptorSetLayout> descriptorSetLayouts{globalSetLayout, materialSetLayout->getDescriptorSetLayout()};
 
         VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
         pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
@@ -109,6 +117,48 @@ namespace lwmeta {
             model->bind(frameInfo.commandBuffer);
             model->draw(frameInfo.commandBuffer);
         }
+    }
+
+    void DissolveRenderSystem::renderGameObject(FrameInfo &frameInfo, GameObject &obj) {
+        pipeline->bind(frameInfo.commandBuffer);
+
+        vkCmdBindDescriptorSets(
+                frameInfo.commandBuffer,
+                VK_PIPELINE_BIND_POINT_GRAPHICS,
+                pipelineLayout,
+                0,
+                1,
+                &frameInfo.globalDescriptorSet,
+                0,
+                nullptr);
+
+
+        SimplePushConstantData push{};
+        push.modelMatrix = obj.transform.mat4();
+        push.normalMatrix = obj.transform.normalMatrix();
+
+        vkCmdPushConstants(
+                frameInfo.commandBuffer,
+                pipelineLayout,
+                VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+                0,
+                sizeof(SimplePushConstantData),
+                &push);
+
+        vkCmdBindDescriptorSets(
+                frameInfo.commandBuffer,
+                VK_PIPELINE_BIND_POINT_GRAPHICS,
+                pipelineLayout,
+                1,
+                1,
+                &assetSystem.GetMaterial(obj.GetComponent<MaterialComponent>()->materialId)->descriptorSet,
+                0,
+                nullptr);
+
+        auto model = assetSystem.GetModel(obj.GetComponent<MeshComponent>()->meshId);
+        model->bind(frameInfo.commandBuffer);
+        model->draw(frameInfo.commandBuffer);
+
     }
 
 }  // namespace lwmeta

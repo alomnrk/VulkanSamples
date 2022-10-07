@@ -57,6 +57,14 @@ namespace lwmeta {
         return material->getId();
     }
 
+    id_t AssetsSystem::CreateDissolveLitMaterial(id_t texture, DescriptorSetLayout *layout,
+                                         DescriptorPool *pool) {
+        auto material = new DissolveLitMaterial(device, currentId++, textures.at(texture), layout,
+                                        pool);
+        materials.emplace(material->getId(), material);
+        return material->getId();
+    }
+
     Material *AssetsSystem::GetMaterial(lwmeta::AssetsSystem::id_t material_id) {
         return materials.at(material_id);
     }

@@ -24,7 +24,7 @@ namespace lwmeta {
 //        return new Material(currentId++, texture, layout, pool);
 //    }
 
-        id_t getId() { return id; }
+        virtual id_t getId() { return id; }
 
         VkDescriptorSet descriptorSet;
 
@@ -122,6 +122,55 @@ namespace lwmeta {
                     .build(descriptorSet);
             std::cout << "finish create material" << std::endl;
         }
+
+
+    };
+
+    struct DissolveLitMaterial : Material {
+        struct DissolveLitMaterialUbo{
+            float strength;
+        };
+
+        DissolveLitMaterial(Device &device, id_t materialId, Texture *texture, DescriptorSetLayout *layout,
+                    DescriptorPool *pool) : Material(materialId) {
+            id = materialId;
+
+
+            VkDescriptorImageInfo imageInfo;
+            imageInfo.sampler = texture->getSampler();
+            imageInfo.imageView = texture->getImageView();
+            imageInfo.imageLayout = texture->getImageLayout();
+
+
+            uboBuffer = std::make_shared<Buffer>(
+                    device,
+                    sizeof(DissolveLitMaterialUbo),
+                    1,
+                    VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+                    VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT);
+            uboBuffer->map();
+
+
+            std::cout << "create material" << std::endl;
+            auto bufferInfo = uboBuffer->descriptorInfo();
+            DescriptorWriter(*layout, *pool)
+                    .writeImage(0, &imageInfo)
+                    .writeBuffer(1, &bufferInfo)
+                    .build(descriptorSet);
+
+            std::cout << "finish create material" << std::endl;
+        }
+
+        void UpdateValues(float strength){
+            DissolveLitMaterialUbo ubo{};
+            ubo.strength = strength;
+
+            uboBuffer->writeToBuffer(&ubo);
+            uboBuffer->flush();
+        }
+
+    private:
+        std::shared_ptr<Buffer> uboBuffer;
     };
 
 
@@ -156,6 +205,9 @@ namespace lwmeta {
 
         id_t
         CreateLitMaterial(id_t texture, DescriptorSetLayout *layout, DescriptorPool *pool);
+
+        id_t
+        CreateDissolveLitMaterial(id_t texture, DescriptorSetLayout *layout, DescriptorPool *pool);
 
 
         Material *GetMaterial(id_t material_id);

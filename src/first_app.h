@@ -7,6 +7,7 @@
 #include "window.h"
 #include "AssetsSystem.h"
 #include "Scene.h"
+#include "systems/DissolveRenderSystem.h"
 
 // std
 #include <memory>
@@ -27,7 +28,7 @@ class FirstApp {
   void run();
 
  private:
-  void loadGameObjects();
+  void loadGameObjects(DissolveRenderSystem &dissloveRenderSystem);
 
   Window window{WIDTH, HEIGHT, "Vulkan Tutorial"};
   Device device{window};

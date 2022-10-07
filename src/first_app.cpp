@@ -34,7 +34,7 @@ namespace lwmeta {
         globalPool =
                 DescriptorPool::Builder(device)
                         .setMaxSets(SwapChain::MAX_DESCRIPTION_SETS)
-                        .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, SwapChain::MAX_FRAMES_IN_FLIGHT)
+                        .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 100)
                         .addPoolSize(VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, SwapChain::MAX_TEXTURES)
                         .build();
 
@@ -69,7 +69,7 @@ namespace lwmeta {
         auto skybox = GameObject::createGameObjectPtr();
         skybox->AddComponent(new MaterialComponent(blacHoleMat));
         scene = new Scene(skybox);
-        loadGameObjects();
+//        loadGameObjects();
     }
 
     FirstApp::~FirstApp() {}
@@ -115,7 +115,7 @@ namespace lwmeta {
         DissolveRenderSystem dissolveRenderSystem{
                 device,
                 renderer.getSwapChainRenderPass(),
-                globalSetLayout->getDescriptorSetLayout(), textureSetLayout->getDescriptorSetLayout(), assetSystem};
+                globalSetLayout->getDescriptorSetLayout(), assetSystem};
 
 
         PointLightSystem pointLightSystem{
@@ -133,6 +133,8 @@ namespace lwmeta {
                 renderer.getSwapChainRenderPass(),
                 globalSetLayout->getDescriptorSetLayout(), textureSetLayout->getDescriptorSetLayout(), assetSystem};
 
+
+        loadGameObjects(dissolveRenderSystem);
 
         Camera camera{};
 
@@ -181,8 +183,9 @@ namespace lwmeta {
 
                 // order here matters
 //                blackHoleRenderSystem.renderGameObjects(frameInfo, *scene->skyBox);
-                dissolveRenderSystem.renderGameObjects(frameInfo, scene->litObjects);
-      pointLightSystem.render(frameInfo, scene->pointLights);
+                dynamic_cast<DissolveLitMaterial*>(assetSystem.GetMaterial(scene->player->GetComponent<MaterialComponent>()->materialId))->UpdateValues((glm::sin(ubo.time * 2.0) + 1) / 2.0f );
+                dissolveRenderSystem.renderGameObject(frameInfo, *scene->player);
+                pointLightSystem.render(frameInfo, scene->pointLights);
 
 
                 renderer.endSwapChainRenderPass(commandBuffer);
@@ -194,9 +197,11 @@ namespace lwmeta {
     }
 
 
-    void FirstApp::loadGameObjects() {
+    void FirstApp::loadGameObjects(DissolveRenderSystem &dissloveRenderSystem) {
         auto testTextureId = assetSystem.AddTexture("../textures/alfa_head_V3.1.png");
-        auto testMaterialId = assetSystem.CreateLitMaterial(testTextureId, textureSetLayout.get(), globalPool.get());
+        auto testMaterialId = assetSystem.CreateDissolveLitMaterial(testTextureId, dissloveRenderSystem.materialSetLayout.get(), globalPool.get());
+//        dynamic_cast<DissolveLitMaterial*>(assetSystem.GetMaterial(testMaterialId))->UpdateValues(0);
+
 
         auto testTexture2Id = assetSystem.AddTexture("../textures/test.png");
         auto testMaterial2Id = assetSystem.CreateLitMaterial(testTexture2Id, textureSetLayout.get(), globalPool.get());
@@ -208,7 +213,7 @@ namespace lwmeta {
         flatVase.AddComponent<MeshComponent>(new MeshComponent(vaseFlatModelId));
         flatVase.transform.translation = {-.5f, .5f, 0.f};
         flatVase.transform.scale = {1, 1, 1};
-        scene->AddLitObject(std::move(flatVase));
+        scene->player = std::make_unique<GameObject>(std::move(flatVase));
 
         uint32_t vaseSmoothModelId = assetSystem.AddModel(Model::createModelFromFile(device, "models/smooth_vase.obj"));
         auto smoothVase = GameObject::createGameObject();
@@ -216,7 +221,7 @@ namespace lwmeta {
         smoothVase.AddComponent<MeshComponent>(new MeshComponent(vaseSmoothModelId));
         smoothVase.transform.translation = {.5f, .5f, 0.f};
         smoothVase.transform.scale = {3.f, 1.5f, 3.f};
-        scene->AddLitObject(std::move(smoothVase));
+//        scene->AddLitObject(std::move(smoothVase));
 
         std::vector<glm::vec3> lightColors{
                 {1.f, .1f, .1f},
