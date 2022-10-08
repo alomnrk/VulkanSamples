@@ -182,9 +182,9 @@ namespace lwmeta {
                 renderer.beginSwapChainRenderPass(commandBuffer);
 
                 // order here matters
-//                blackHoleRenderSystem.renderGameObjects(frameInfo, *scene->skyBox);
-                dynamic_cast<DissolveLitMaterial*>(assetSystem.GetMaterial(scene->player->GetComponent<MaterialComponent>()->materialId))->UpdateValues((glm::sin(ubo.time * 2.0) + 1) / 2.0f );
-                dissolveRenderSystem.renderGameObject(frameInfo, *scene->player);
+                blackHoleRenderSystem.renderGameObjects(frameInfo, *scene->skyBox);
+//                dynamic_cast<DissolveLitMaterial*>(assetSystem.GetMaterial(scene->player->GetComponent<MaterialComponent>()->materialId))->UpdateValues((glm::sin(ubo.time * 2.0) + 1) / 2.0f );
+                simpleRenderSystem.renderGameObjects(frameInfo, scene->litObjects);
                 pointLightSystem.render(frameInfo, scene->pointLights);
 
 
@@ -198,22 +198,24 @@ namespace lwmeta {
 
 
     void FirstApp::loadGameObjects(DissolveRenderSystem &dissloveRenderSystem) {
-        auto testTextureId = assetSystem.AddTexture("../textures/alfa_head_V3.1.png");
-        auto testMaterialId = assetSystem.CreateDissolveLitMaterial(testTextureId, dissloveRenderSystem.materialSetLayout.get(), globalPool.get());
+        auto testTextureId = assetSystem.AddTexture("../textures/Env_Base_Color_1001.png");
+        auto testMaterialId = assetSystem.CreateLitMaterial(testTextureId, textureSetLayout.get(), globalPool.get());
 //        dynamic_cast<DissolveLitMaterial*>(assetSystem.GetMaterial(testMaterialId))->UpdateValues(0);
 
 
         auto testTexture2Id = assetSystem.AddTexture("../textures/test.png");
         auto testMaterial2Id = assetSystem.CreateLitMaterial(testTexture2Id, textureSetLayout.get(), globalPool.get());
 
-        uint32_t vaseFlatModelId = assetSystem.AddModel(Model::createModelFromFile(device, "models/head_v1.obj"));
+        uint32_t vaseFlatModelId = assetSystem.AddModel(Model::createModelFromFile(device, "models/portal_save_room_v1.obj"));
 //        uint32_t vaseFlatModelId = assetSystem.AddModel(Model::createModelFromFile(device, "models/body_v1.obj"));
         auto flatVase = GameObject::createGameObject();
         flatVase.AddComponent<MaterialComponent>(new MaterialComponent(testMaterialId));
         flatVase.AddComponent<MeshComponent>(new MeshComponent(vaseFlatModelId));
         flatVase.transform.translation = {-.5f, .5f, 0.f};
+        flatVase.transform.rotation = {0, 0, 0};
         flatVase.transform.scale = {1, 1, 1};
-        scene->player = std::make_unique<GameObject>(std::move(flatVase));
+//        scene->player = std::make_unique<GameObject>(std::move(flatVase));
+        scene->AddLitObject(std::move(flatVase));
 
         uint32_t vaseSmoothModelId = assetSystem.AddModel(Model::createModelFromFile(device, "models/smooth_vase.obj"));
         auto smoothVase = GameObject::createGameObject();

@@ -30,7 +30,7 @@ layout(push_constant) uniform Push {
   mat4 modelMatrix;
 } push;
 
-const vec3 bh=vec3(0, 7, -35);
+const vec3 bh=vec3(0, -10, -250);
 const float bh_M=1.2;
 const float r_bar=2.7*bh_M;
 const float disc_r_orig=r_bar * 2.1;
