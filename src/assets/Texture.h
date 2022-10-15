@@ -5,7 +5,7 @@
 #ifndef LWMETAVERSE_TEXTURE_H
 #define LWMETAVERSE_TEXTURE_H
 
-#include "device.h"
+#include "../vulkan_utils/device.h"
 #include <string.h>
 #include <vulkan/vulkan.h>
 #include <unordered_map>

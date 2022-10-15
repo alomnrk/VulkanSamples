@@ -1,6 +1,6 @@
 #include "pipeline.h"
 
-#include "model.h"
+#include "../assets/model.h"
 
 // std
 #include <cassert>

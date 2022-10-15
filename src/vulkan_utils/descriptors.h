@@ -21,7 +21,7 @@ namespace lwmeta {
                     VkShaderStageFlags stageFlags,
                     uint32_t count = 1);
 
-            std::unique_ptr<DescriptorSetLayout> build() const;
+            std::shared_ptr<DescriptorSetLayout> build() const;
 
         private:
             Device &device;

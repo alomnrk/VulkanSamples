@@ -6,7 +6,8 @@
 #define LWMETAVERSE_SCENE_H
 
 #include "game_object.h"
-#include "camera.h"
+#include "../utils/camera.h"
+#include "LightSystem.h"
 
 namespace lwmeta {
     class Scene {
@@ -24,6 +25,8 @@ namespace lwmeta {
         GameObject *skyBox;
 
         std::unique_ptr<GameObject> player;
+
+        LightSystem lightSystem;
     };
 }
 

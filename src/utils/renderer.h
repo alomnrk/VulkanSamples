@@ -1,8 +1,8 @@
 #pragma once
 
-#include "device.h"
-#include "swap_chain.h"
-#include "window.h"
+#include "../vulkan_utils/device.h"
+#include "../vulkan_utils/swap_chain.h"
+#include "../vulkan_utils/window.h"
 
 // std
 #include <cassert>

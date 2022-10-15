@@ -4,12 +4,12 @@ project(LWMetaverse)
 set(CMAKE_CXX_STANDARD 20)
 
 
-add_executable(LWMetaverse src/main.cpp src/window.h src/window.cpp src/utils.h src/swap_chain.h src/swap_chain.cpp
-        src/renderer.h src/renderer.cpp src/pipeline.h src/pipeline.cpp src/model.h src/model.cpp
-        src/game_object.h src/game_object.cpp src/frame_info.h src/device.h src/device.cpp
-        src/descriptors.h src/descriptors.cpp src/camera.h src/camera.cpp src/buffer.h src/buffer.cpp
-        src/keyboard_movement_controller.cpp src/keyboard_movement_controller.h src/first_app.h src/first_app.cpp
-        src/systems/point_light_system.h src/systems/point_light_system.cpp src/systems/LitRenderSystem.h src/systems/LitRenderSystem.cpp src/Texture.cpp src/Texture.h src/CubeMap.cpp src/CubeMap.h src/systems/SkyBoxRenderSystem.cpp src/systems/SkyBoxRenderSystem.h src/AssetsSystem.cpp src/AssetsSystem.h src/systems/BlackHoleRenderSystem.cpp src/systems/TransfusionRenderSystem.h src/systems/TransfusionRenderSystem.cpp src/systems/BlackHoleRenderSystem.h src/systems/DissolveRenderSystem.h src/systems/DissolveRenderSystem.cpp src/Scene.cpp src/Scene.h)
+add_executable(LWMetaverse src/main.cpp src/vulkan_utils/window.h src/vulkan_utils/window.cpp src/utils/utils.h src/vulkan_utils/swap_chain.h src/vulkan_utils/swap_chain.cpp
+        src/utils/renderer.h src/utils/renderer.cpp src/vulkan_utils/pipeline.h src/vulkan_utils/pipeline.cpp src/assets/model.h src/assets/model.cpp
+        src/logic/game_object.h src/logic/game_object.cpp src/utils/frame_info.h src/vulkan_utils/device.h src/vulkan_utils/device.cpp
+        src/vulkan_utils/descriptors.h src/vulkan_utils/descriptors.cpp src/utils/camera.h src/utils/camera.cpp src/vulkan_utils/buffer.h src/vulkan_utils/buffer.cpp
+        src/utils/keyboard_movement_controller.cpp src/utils/keyboard_movement_controller.h src/logic/first_app.h src/logic/first_app.cpp
+        src/systems/point_light_system.h src/systems/point_light_system.cpp src/systems/LitRenderSystem.h src/systems/LitRenderSystem.cpp src/assets/Texture.cpp src/assets/Texture.h src/vulkan_utils/CubeMap.cpp src/vulkan_utils/CubeMap.h src/systems/SkyBoxRenderSystem.cpp src/systems/SkyBoxRenderSystem.h src/assets/AssetsSystem.cpp src/assets/AssetsSystem.h src/systems/BlackHoleRenderSystem.cpp src/systems/TransfusionRenderSystem.h src/systems/TransfusionRenderSystem.cpp src/systems/BlackHoleRenderSystem.h src/systems/DissolveRenderSystem.h src/systems/DissolveRenderSystem.cpp src/logic/Scene.cpp src/logic/Scene.h src/marerials/Material.h src/systems/UniversalRenderSystem.h src/systems/UniversalRenderSystem.cpp src/logic/LightSystem.cpp src/logic/LightSystem.h src/marerials/MaterialInstance.h src/marerials/MaterialSystem.cpp src/marerials/MaterialSystem.h src/marerials/LitMaterialInstance.h src/marerials/PBRMaterialInstance.h)
 
 #Vulkan
 find_package(Vulkan REQUIRED)

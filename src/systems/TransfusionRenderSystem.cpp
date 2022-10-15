@@ -84,8 +84,8 @@ namespace lwmeta {
 
 
             SimplePushConstantData push{};
-            push.modelMatrix = obj.transform.mat4();
-            push.normalMatrix = obj.transform.normalMatrix();
+            push.modelMatrix = obj.transform->mat4();
+            push.normalMatrix = obj.transform->normalMatrix();
 
             vkCmdPushConstants(
                     frameInfo.commandBuffer,
@@ -95,13 +95,14 @@ namespace lwmeta {
                     sizeof(SimplePushConstantData),
                     &push);
 
+            VkDescriptorSet b;
             vkCmdBindDescriptorSets(
                     frameInfo.commandBuffer,
                     VK_PIPELINE_BIND_POINT_GRAPHICS,
                     pipelineLayout,
                     1,
                     1,
-                    &assetSystem.GetMaterial(obj.GetComponent<MaterialComponent>()->materialId)->descriptorSet,
+                    &b,
                     0,
                     nullptr);
 

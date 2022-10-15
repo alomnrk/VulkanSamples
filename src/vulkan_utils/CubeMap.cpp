@@ -3,7 +3,7 @@
 //
 
 #include "CubeMap.h"
-#include "../external/stb/stb_image.h"
+#include "../../external/stb/stb_image.h"
 #include "buffer.h"
 #include <iostream>
 

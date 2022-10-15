@@ -24,7 +24,7 @@ DescriptorSetLayout::Builder &DescriptorSetLayout::Builder::addBinding(
   return *this;
 }
 
-std::unique_ptr<DescriptorSetLayout> DescriptorSetLayout::Builder::build() const {
+std::shared_ptr<DescriptorSetLayout> DescriptorSetLayout::Builder::build() const {
   return std::make_unique<DescriptorSetLayout>(device, bindings);
 }
 

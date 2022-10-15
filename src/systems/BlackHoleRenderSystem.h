@@ -5,12 +5,12 @@
 #ifndef LWMETAVERSE_BLACKHOLERENDERSYSTEM_H
 #define LWMETAVERSE_BLACKHOLERENDERSYSTEM_H
 
-#include "../device.h"
-#include "../frame_info.h"
-#include "../pipeline.h"
-#include "../model.h"
-#include "../AssetsSystem.h"
-#include "../Scene.h"
+#include "../vulkan_utils/device.h"
+#include "../utils/frame_info.h"
+#include "../vulkan_utils/pipeline.h"
+#include "../assets/model.h"
+#include "../assets/AssetsSystem.h"
+#include "../logic/Scene.h"
 
 namespace lwmeta {
     class BlackHoleRenderSystem {

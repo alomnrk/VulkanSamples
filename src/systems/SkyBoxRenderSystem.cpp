@@ -3,8 +3,8 @@
 //
 
 #include "SkyBoxRenderSystem.h"
-#include "../model.h"
-#include "../AssetsSystem.h"
+#include "../assets/model.h"
+#include "../assets/AssetsSystem.h"
 
 namespace lwmeta {
 
@@ -119,7 +119,7 @@ namespace lwmeta {
 
 
         SkyBoxPushConstants push{};
-        push.modelMatrix = skybox.transform.rot4();
+        push.modelMatrix = skybox.transform->rot4();
 
         vkCmdPushConstants(
                 frameInfo.commandBuffer,
@@ -130,13 +130,14 @@ namespace lwmeta {
                 &push);
 
 
+        VkDescriptorSet b;
         vkCmdBindDescriptorSets(
                 frameInfo.commandBuffer,
                 VK_PIPELINE_BIND_POINT_GRAPHICS,
                 pipelineLayout,
                 1,
                 1,
-                &assetsSystem.GetMaterial(skybox.GetComponent<MaterialComponent>()->materialId)->descriptorSet,
+                &b,
                 0,
                 nullptr);
 

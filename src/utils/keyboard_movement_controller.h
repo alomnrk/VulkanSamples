@@ -1,7 +1,7 @@
 #pragma once
 
-#include "game_object.h"
-#include "window.h"
+#include "../logic/game_object.h"
+#include "../vulkan_utils/window.h"
 
 namespace lwmeta {
 class KeyboardMovementController {

@@ -78,17 +78,17 @@ namespace lwmeta {
             assert(lightIndex < MAX_LIGHTS && "Point lights exceed maximum specified");
 
             // update light position
-            obj.transform.translation = glm::vec3(rotateLight * glm::vec4(obj.transform.translation, 1.f));
+            obj.transform->translation = glm::vec3(rotateLight * glm::vec4(obj.transform->translation, 1.f));
 
             // copy light to ubo
-            ubo.pointLights[lightIndex].position = glm::vec4(obj.transform.translation, 1.f);
+            ubo.pointLights[lightIndex].position = glm::vec4(obj.transform->translation, 1.f);
             auto plComponent = obj.GetComponent<PointLightRendererComponent>();
-            ubo.pointLights[lightIndex].color = glm::vec4(plComponent->pointLight->color,
-                                                          plComponent->pointLight->lightIntensity);
+//            ubo.pointLights[lightIndex].color = glm::vec4(plComponent->pointLight->color,
+//                                                          plComponent->pointLight->lightIntensity);
 
             lightIndex += 1;
         }
-        ubo.numLights = lightIndex;
+//        ubo.numLights = lightIndex;
     }
 
     void PointLightSystem::render(FrameInfo &frameInfo, GameObject::Map &gameObjects) {
@@ -98,7 +98,7 @@ namespace lwmeta {
             auto &obj = kv.second;
 
             // calculate distance
-            auto offset = frameInfo.camera.getPosition() - obj.transform.translation;
+            auto offset = frameInfo.camera.getPosition() - obj.transform->translation;
             float disSquared = glm::dot(offset, offset);
             sorted[disSquared] = obj.getId();
         }
@@ -121,9 +121,9 @@ namespace lwmeta {
             auto &obj = gameObjects.at(it->second);
 
             PointLightPushConstants push{};
-            push.position = glm::vec4(obj.transform.translation, 1.f);
+            push.position = glm::vec4(obj.transform->translation, 1.f);
             auto plComponent = obj.GetComponent<PointLightRendererComponent>();
-            push.color = glm::vec4(plComponent->pointLight->color, plComponent->pointLight->lightIntensity);
+//            push.color = glm::vec4(plComponent->pointLight->color, plComponent->pointLight->lightIntensity);
             push.radius = plComponent->radius;
 
             vkCmdPushConstants(

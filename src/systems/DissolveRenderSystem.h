@@ -1,15 +1,15 @@
 #pragma once
 
-#include "../camera.h"
-#include "../device.h"
-#include "../frame_info.h"
-#include "../game_object.h"
-#include "../pipeline.h"
+#include "../utils/camera.h"
+#include "../vulkan_utils/device.h"
+#include "../utils/frame_info.h"
+#include "../logic/game_object.h"
+#include "../vulkan_utils/pipeline.h"
 
 // std
 #include <memory>
 #include <vector>
-#include "../AssetsSystem.h"
+#include "../assets/AssetsSystem.h"
 
 namespace lwmeta {
     class DissolveRenderSystem {

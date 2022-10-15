@@ -7,8 +7,8 @@
 #include <stdexcept>
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "../external/stb/stb_image.h"
-#include "buffer.h"
+#include "../../external/stb/stb_image.h"
+#include "../vulkan_utils/buffer.h"
 #include <stdexcept>
 #include <cmath>
 #include <locale>
