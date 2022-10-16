@@ -7,8 +7,8 @@
 namespace lwmeta {
     AssetsSystem::AssetsSystem(Device &device) : device{device} {}
 
-    id_t AssetsSystem::AddTexture(const std::string filepath) {
-        Texture *texture = Texture::createTexture(device, filepath);
+    id_t AssetsSystem::AddTexture(const std::string filepath, uint32_t desired_channels, bool gammaCorrection) {
+        Texture *texture = Texture::createTexture(device, filepath, desired_channels, gammaCorrection);
         textures.emplace(texture->getId(), texture);
         return texture->getId();
     }

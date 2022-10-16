@@ -188,7 +188,7 @@ namespace lwmeta {
 
         AssetsSystem &operator=(const AssetsSystem &) = delete;
 
-        id_t AddTexture(const std::string filepath);
+        id_t AddTexture(const std::string filepath, uint32_t desired_channels, bool gammaCorrection);
 
         id_t AddCubeMap(const std::vector<char *> &fileNames);
 

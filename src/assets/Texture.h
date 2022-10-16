@@ -16,7 +16,7 @@ namespace lwmeta{
         using id_t = unsigned int;
 //        using Map = std::unordered_map<id_t, Texture>;
 
-        Texture(Device &device, const std::string &filepath, id_t textureId, VkSamplerAddressMode samplerAddressMode = VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT);
+        Texture(Device &device, const std::string &filepath, id_t textureId, uint32_t desired_channels, bool gammaCorrection, VkSamplerAddressMode samplerAddressMode = VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT);
         ~Texture();
 
         Texture(const Texture &) = delete;
@@ -30,9 +30,9 @@ namespace lwmeta{
 
         id_t getId() { return id; }
 
-        static Texture* createTexture(Device &device, const std::string &filepath, VkSamplerAddressMode samplerAddressMode = VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT) {
+        static Texture* createTexture(Device &device, const std::string &filepath, uint32_t desired_channels, bool gammaCorrection, VkSamplerAddressMode samplerAddressMode = VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT) {
             static id_t currentId = 0;
-            return new Texture(device, filepath, currentId++, samplerAddressMode);
+            return new Texture(device, filepath, currentId++, desired_channels, gammaCorrection, samplerAddressMode);
         }
     private:
 

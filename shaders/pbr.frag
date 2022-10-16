@@ -112,7 +112,8 @@ void main() {
   float roughness = texture(roughnessTexture, fragUV).r;
   float ao        = 1;
 
-  vec3 N = normalize(fragNormalWorld);
+//  vec3 N = normalize(fragNormalWorld);
+  vec3 N = getNormalFromMap();
   vec3 cameraPosWorld = ubo.invView[3].xyz;
   vec3 V = normalize(cameraPosWorld - fragPosWorld);
 
@@ -161,8 +162,7 @@ void main() {
     Lo += (kD * albedo / PI + specular) * radiance * NdotL;  // note that we already multiplied the BRDF by the Fresnel (kS) so we won't multiply by kS again
   }
 
-  // ambient lighting (note that the next IBL tutorial will replace
-  // this ambient lighting with environment lighting).
+
   vec3 ambient = vec3(0.03) * albedo * ao;
 
   vec3 color = ambient + Lo;

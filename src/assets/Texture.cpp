@@ -13,20 +13,42 @@
 #include <cmath>
 #include <locale>
 
+#include <iostream>
+
 namespace lwmeta {
-    Texture::Texture(Device &device, const std::string &filepath, id_t textureId, VkSamplerAddressMode samplerAddressMode) : device{device} {
+    Texture::Texture(Device &device, const std::string &filepath, id_t textureId, uint32_t desired_channels, bool gammaCorrection, VkSamplerAddressMode samplerAddressMode) : device{device} {
         id = textureId;
 
         int channels;
         int m_BytesPerPixel;
 
-        auto data = stbi_load(filepath.c_str(), &width, &height, &m_BytesPerPixel, 4);
+        switch (desired_channels) {
+            case 1:
+                imageFormat = gammaCorrection? VK_FORMAT_R8_SRGB : VK_FORMAT_R8_UNORM;
+                break;
+            case 2:
+                imageFormat = gammaCorrection? VK_FORMAT_R8G8_SRGB : VK_FORMAT_R8G8_UNORM;
+                break;
+            case 3:
+                imageFormat = gammaCorrection? VK_FORMAT_R8G8B8_SRGB : VK_FORMAT_R8G8B8_UNORM;
+                break;
+            case 4:
+                imageFormat = gammaCorrection? VK_FORMAT_R8G8B8A8_SRGB : VK_FORMAT_R8G8B8A8_UNORM;
+                break;
+            default:
+                desired_channels = 4;
+                imageFormat = gammaCorrection? VK_FORMAT_R8G8B8A8_SRGB : VK_FORMAT_R8G8B8A8_UNORM;
+                break;
+        }
+
+
+        auto data = stbi_load(filepath.c_str(), &width, &height, &m_BytesPerPixel, desired_channels);
 
         mipLevels = static_cast<uint32_t>(std::floor(std::log2(std::max(width, height)))) + 1;
 
         Buffer stagingBuffer{
                 device,
-                4,
+                desired_channels,
                 static_cast<uint32_t>(width * height),
                 VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
                 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
@@ -35,7 +57,7 @@ namespace lwmeta {
         stagingBuffer.map();
         stagingBuffer.writeToBuffer(data);
 
-        imageFormat = VK_FORMAT_R8G8B8A8_SRGB;
+//        imageFormat = VK_FORMAT_R8G8B8A8_SRGB;
 
         VkImageCreateInfo imageInfo = {};
         imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;

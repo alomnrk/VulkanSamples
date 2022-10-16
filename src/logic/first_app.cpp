@@ -60,7 +60,7 @@ namespace lwmeta {
                                                 });
 //        auto testMaterialId = assetSystem.CreateCubeMapMaterial(cubeMapId, textureSetLayout.get(), globalPool.get());
 
-        auto diskTexture = assetSystem.AddTexture("../textures/space.jpg");
+        auto diskTexture = assetSystem.AddTexture("../textures/space.jpg", 4, true);
 //        auto diskMaterial = assetSystem.CreateTextureMaterial(diskTexture, 1, textureSetLayout.get(), globalPool.get());
 
 //        auto blacHoleMat = assetSystem.CreateBlackHoleMaterial(cubeMapId, diskTexture, textureSetLayout.get(),
@@ -266,7 +266,7 @@ namespace lwmeta {
     }
 
     void FirstApp::loadGameObjects(VkDescriptorSetLayout globalSetLayout, VkRenderPass renderPass) {
-        auto testTextureId = assetSystem.AddTexture("../textures/Env_Base_Color_1001.png");
+        auto testTextureId = assetSystem.AddTexture("../textures/Env_Base_Color_1001.png", 4, true);
         materialSystem.CreateLitMaterial(device, globalSetLayout, renderPass);
         uint32_t testMaterialId = materialSystem.CreateLitMaterialInstance(assetSystem.GetTexture(testTextureId),
                                                                            globalPool.get());
@@ -287,13 +287,13 @@ namespace lwmeta {
         scene->AddLitObject(std::move(testModel));
 
 
-        testTextureId = assetSystem.AddTexture("../textures/Env_Base_Color_1001.png");
+        testTextureId = assetSystem.AddTexture("../textures/Env_Base_Color_1001.png", 4, false);
 
         //pbr
-        auto albedoTextureId = assetSystem.AddTexture("../textures/pbr/test/rustediron2_basecolor.png");
-        auto normalTextureId = assetSystem.AddTexture("../textures/pbr/test/rustediron2_normal.png");
-        auto metallicTextureId = assetSystem.AddTexture("../textures/pbr/test/rustediron2_metallic.png");
-        auto roughnessTextureId = assetSystem.AddTexture("../textures/pbr/test/rustediron2_roughness.png");
+        auto albedoTextureId = assetSystem.AddTexture("../textures/pbr/obsidian/Base_Color.png", 4, false);
+        auto normalTextureId = assetSystem.AddTexture("../textures/pbr/obsidian/Normal.png", 4, false);
+        auto metallicTextureId = assetSystem.AddTexture("../textures/pbr/obsidian/Metallic.png", 1, false);
+        auto roughnessTextureId = assetSystem.AddTexture("../textures/pbr/obsidian/Roughness.png", 1, false);
 
         materialSystem.CreatePBRMaterial(device, globalSetLayout, renderPass);
         auto testMaterialId2 = materialSystem.CreatePBRMaterialInstance(assetSystem.GetTexture(albedoTextureId), assetSystem.GetTexture(normalTextureId), assetSystem.GetTexture(metallicTextureId), assetSystem.GetTexture(roughnessTextureId),
