@@ -107,7 +107,7 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
 void main() {
 //  vec3 diffuseLight = ubo.ambientLightColor.xyz * ubo.ambientLightColor.w;
 //  vec3 specularLight = vec3(0.0);
-  vec3 albedo     = pow(texture(albedoTexture, fragUV).rgb, vec3(2.2));
+  vec3 albedo     = texture(albedoTexture, fragUV).rgb;
   float metallic  = texture(metallicTexture, fragUV).r;
   float roughness = texture(roughnessTexture, fragUV).r;
   float ao        = 1;

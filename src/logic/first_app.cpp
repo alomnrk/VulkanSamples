@@ -290,7 +290,9 @@ namespace lwmeta {
         testTextureId = assetSystem.AddTexture("../textures/Env_Base_Color_1001.png", 4, false);
 
         //pbr
-        auto albedoTextureId = assetSystem.AddTexture("../textures/pbr/obsidian/Base_Color.png", 4, false);
+        auto albedoTextureId = assetSystem.AddTexture("../textures/pbr/obsidian/Base_Color.png", 4, true);
+//        auto albedoTextureId = assetSystem.AddTexture("../textures/pbr/test/rustediron2_basecolor.png", 4, true);
+
         auto normalTextureId = assetSystem.AddTexture("../textures/pbr/obsidian/Normal.png", 4, false);
         auto metallicTextureId = assetSystem.AddTexture("../textures/pbr/obsidian/Metallic.png", 1, false);
         auto roughnessTextureId = assetSystem.AddTexture("../textures/pbr/obsidian/Roughness.png", 1, false);
