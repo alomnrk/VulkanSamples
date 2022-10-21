@@ -24,11 +24,11 @@ language GO/Python/C#.
 
 Right now project is in really early stage, however there are some dev visual items:
 
-BlackHole
+# BlackHole
 ![alt text](./readme_resources/black-hole.gif?raw=true)
 
-Fractal RayMarching
+# Fractal RayMarching
 ![alt text](./readme_resources/fractal.jpg?raw=true)
 
-PBR Material
+# PBR Material
 ![alt text](./readme_resources/pbr.gif?raw=true)
