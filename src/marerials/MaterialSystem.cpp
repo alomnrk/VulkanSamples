@@ -6,6 +6,7 @@
 
 #include "LitMaterialInstance.h"
 #include "PBRMaterialInstance.h"
+#include "FractalMaterialInstance.h"
 
 namespace lwmeta{
     uint32_t MaterialSystem::CreateLitMaterialInstance(Texture *texture, DescriptorPool *pool) {
@@ -18,6 +19,12 @@ namespace lwmeta{
         auto material = materials.at("PBR").get();
         auto materialSetLayout = material->getMaterialSetLayout();
         return materials.at("PBR")->AddInstance(new PBRMaterialInstance(0, *materialSetLayout, albedoTexture, normalTexture, metallicTexture, roughnessTexture, pool, material->pipelineLayout));
+    }
+
+    uint32_t MaterialSystem::CreateFractalMaterialInstance(DescriptorPool *pool) {
+        auto material = materials.at("Fractal").get();
+        auto materialSetLayout = material->getMaterialSetLayout();
+        return materials.at("Fractal")->AddInstance(new FractalMaterialInstance(0, *materialSetLayout, pool, material->pipelineLayout));
     }
 
 
@@ -38,6 +45,27 @@ namespace lwmeta{
         pushConstantRange.size = sizeof(BasePushConstantData);
 
         materials.emplace("PBR",
+                          std::make_unique<Material>(device, vertPath, fragPath, globalSetLayout, materialSetLayout,
+                                                     pushConstantRange, renderPass));
+    }
+
+    void MaterialSystem::CreateFractalMaterial(lwmeta::Device &device, VkDescriptorSetLayout globalSetLayout,
+                                           VkRenderPass renderPass) {
+        std::string vertPath = "shaders/lit.vert.spv";
+        std::string fragPath = "shaders/fractal.frag.spv";
+        auto materialSetLayout = DescriptorSetLayout::Builder(device)
+//                .addBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
+//                .addBinding(1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
+//                .addBinding(2, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
+//                .addBinding(3, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
+                .build();
+
+        VkPushConstantRange pushConstantRange{};
+        pushConstantRange.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT; //?
+        pushConstantRange.offset = 0;
+        pushConstantRange.size = sizeof(BasePushConstantData);
+
+        materials.emplace("Fractal",
                           std::make_unique<Material>(device, vertPath, fragPath, globalSetLayout, materialSetLayout,
                                                      pushConstantRange, renderPass));
     }

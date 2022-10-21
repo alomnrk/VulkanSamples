@@ -1,4 +1,5 @@
 #include "game_object.h"
+#include <glm/gtx/string_cast.hpp>
 
 namespace lwmeta {
 
@@ -9,7 +10,7 @@ namespace lwmeta {
         const float s2 = glm::sin(rotation.x);
         const float c1 = glm::cos(rotation.y);
         const float s1 = glm::sin(rotation.y);
-        return glm::mat4{
+        auto m = glm::mat4{
                 {
                         scale.x * (c1 * c3 + s1 * s2 * s3),
                                        scale.x * (c2 * s3),
@@ -29,6 +30,9 @@ namespace lwmeta {
                                                                      0.0f,
                 },
                 {       translation.x, translation.y, translation.z, 1.0f}};
+
+//        std::cout << glm::to_string(m) << std::endl;
+        return m;
     }
 
     glm::mat4 TransformComponent::rot4() {

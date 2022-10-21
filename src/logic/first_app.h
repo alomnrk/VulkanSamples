@@ -11,6 +11,7 @@
 #include "../marerials/Material.h"
 #include "../marerials/LitMaterialInstance.h"
 #include "../marerials/PBRMaterialInstance.h"
+#include "../marerials/FractalMaterialInstance.h"
 // std
 #include <memory>
 #include <vector>

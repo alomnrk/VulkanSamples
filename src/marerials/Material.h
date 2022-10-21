@@ -54,7 +54,10 @@ namespace lwmeta {
 //            pushConstantRange.offset = 0;
 //            pushConstantRange.size = sizeof(SimplePushConstantData);
 
-            std::vector<VkDescriptorSetLayout> descriptorSetLayouts{globalSetLayout, materialSetLayout};
+            std::vector<VkDescriptorSetLayout> descriptorSetLayouts{globalSetLayout};
+            if (materialSetLayout != nullptr){
+                descriptorSetLayouts.push_back(materialSetLayout);
+            }
 
             VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
             pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;

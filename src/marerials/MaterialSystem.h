@@ -22,11 +22,17 @@ namespace lwmeta {
         void CreatePBRMaterial(lwmeta::Device &device,
                                VkDescriptorSetLayout globalSetLayout, VkRenderPass renderPass);
 
+        void CreateFractalMaterial(lwmeta::Device &device,
+                               VkDescriptorSetLayout globalSetLayout, VkRenderPass renderPass);
+
+
 //        void CreateDissolveLitMaterial(lwmeta::Device &device, std::string vertPath, std::string fragPath,
 //                                       VkDescriptorSetLayout globalSetLayout, VkRenderPass renderPass);
 
         uint32_t CreateLitMaterialInstance(Texture *texture, DescriptorPool *pool);
         uint32_t CreatePBRMaterialInstance(Texture *albedoTexture, Texture* normalTexture, Texture *metallicTexture, Texture *roughnessTexture, DescriptorPool *pool);
+        uint32_t CreateFractalMaterialInstance(DescriptorPool *pool);
+
 
         MaterialInstance *GetMaterialInstance(std::string name, uint32_t instance_id) {
             return materials.at(name)->GetMaterialInstance(instance_id);

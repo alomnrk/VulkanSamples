@@ -199,12 +199,19 @@ namespace lwmeta {
                 auto g2 = &scene->litObjects.at(1);
                 dynamic_cast<PBRMaterialInstance*>(g2->GetComponent<MaterialComponent>()->getMaterialInstance())->UpdatePush(g2->transform->mat4(), g2->transform->normalMatrix());
 
+                auto g3 = &scene->litObjects.at(2);
+                dynamic_cast<FractalMaterialInstance*>(g3->GetComponent<MaterialComponent>()->getMaterialInstance())->UpdatePush(g3->transform->mat4(), g3->transform->normalMatrix());
+
                 scene->litObjects.at(0).Update();
                 scene->litObjects.at(1).Update();
+                scene->litObjects.at(2).Update();
 
                 //global desc and command buffer
                 scene->litObjects.at(0).Render(frameInfo);
                 scene->litObjects.at(1).Render(frameInfo);
+
+
+                scene->litObjects.at(2).Render(frameInfo);
 
                 renderer.endSwapChainRenderPass(commandBuffer);
                 renderer.endFrame();
@@ -287,6 +294,9 @@ namespace lwmeta {
         scene->AddLitObject(std::move(testModel));
 
 
+
+
+
         testTextureId = assetSystem.AddTexture("../textures/Env_Base_Color_1001.png", 4, false);
 
         //pbr
@@ -316,6 +326,23 @@ namespace lwmeta {
 //        scene->player = std::make_unique<GameObject>(std::move(flatVase));
         scene->AddLitObject(std::move(testModel));
 
+
+        //Fractal
+        auto fractal = GameObject::createGameObject();
+        materialSystem.CreateFractalMaterial(device, globalSetLayout, renderPass);
+        auto fractalMaterialId = materialSystem.CreateFractalMaterialInstance(globalPool.get());
+        matc = new MaterialComponent(&materialSystem, "Fractal", fractalMaterialId);
+        fractal.AddComponent<MaterialComponent>(matc);
+        mc = new MeshComponent(&assetSystem, testModelId);
+
+        fractal.AddComponent<UsualRendererComponent>(new UsualRendererComponent(0, mc, matc));
+
+        float scale = 20;
+        fractal.transform->translation = {0, scale * 0.3, 0.f};
+        fractal.transform->rotation = {0, 0, 0};
+        fractal.transform->scale = {scale, scale, scale};
+
+        scene->AddLitObject(std::move(fractal));
 
         AddLights();
     }
