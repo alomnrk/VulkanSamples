@@ -16,9 +16,8 @@ For these purposes, I use **Vulkan** and **C++**.
 >Vulkan gives more accurate control over memory and has
 built-in features for VR.
 
-**Metaverse is about networking, right?**<br/>
->But you haven't said anything about yet.
-Yeah, networking is also a part of this project. As for fast transmitting data like transforms and audio - first approach will definitely use
+**Metaverse is about networking, right? But you haven't said anything about yet.**<br/>
+>Yeah, networking is also a part of this project. As for fast transmitting data like transforms and audio - first approach will definitely use
 pure udp and WebRTC protocols using Centrilized Dedicated Server model written on C++, maybe I'll also add a P2P model supporting. 
 Most likely the complex server business logic (text chatting) will be separated and implemented using high-level
 language GO/Python/C#.
